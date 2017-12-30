@@ -1,4 +1,4 @@
-# Yolo Face Detection
+# Yolo Keras Face Detection
 
 WiderFaceDataSetとBasicYoloKerasを使用して顔検出を行います。（実験中）
 
