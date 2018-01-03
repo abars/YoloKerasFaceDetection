@@ -58,13 +58,15 @@ Execute test.
 
 `./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg`
 
-Download CaffeYolo and put in the same folder.
+Download pytorch-caffe-darknet-convert and put in the same folder.
 
-https://github.com/xingwangsfu/caffe-yolo
+https://github.com/marvis/pytorch-caffe-darknet-convert
 
 Convert to Caffe model.
 
-`python create_yolo_caffemodel.py -m yolo_train_val.prototxt -w yolo.weights -o yolo.caffemodel`
+`cd pytorch-caffe-darknet-convert`
+
+`python darknet2caffe.py ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights yolo_train_val.prototxt yolo.caffemodel`
 
 # Appendix : Train hand detection
 
