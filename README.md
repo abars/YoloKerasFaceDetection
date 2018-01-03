@@ -42,7 +42,7 @@ Download Darknet and put in the same folder.
 
 https://github.com/pjreddie/darknet
 
-Compile with modify src/yolo.c and Execute train.
+Compile with modify src/yolo.c.
 
 `char *train_images = "../WIDER_train/annotations_darknet/train.txt";`
 
@@ -76,7 +76,7 @@ Create detectiondata/train/pos annotations for darknet.
 
 `perl annotation_vivahand_darknet.pl`
 
-Compile with modify src/yolo.c and Execute train.
+Compile with modify src/yolo.c.
 
 `char *train_images = "../detectiondata/train/pos/train.txt";`
 `char *backup_directory = "backup/";`
