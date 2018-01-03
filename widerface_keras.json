@@ -9,7 +9,7 @@
 
     "train": {
         "train_image_folder":   "../WIDER_train/images/",
-        "train_annot_folder":   "../WIDER_train/annotations/",     
+        "train_annot_folder":   "../WIDER_train/annotations_keras/",     
           
         "train_times":          10,
         "pretrained_weights":   "full_yolo_face.h5",

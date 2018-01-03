@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Image::Size;
 
-mkdir "WIDER_train/annotations";
+mkdir "WIDER_train/annotations_keras";
 
 my $file_no=0;
 my $line_no=0;
@@ -12,7 +12,7 @@ my $line_no=0;
 open(IN,"<wider_face_split/wider_face_train_bbx_gt.txt") or die ("wider face dataset not found");
 
 while(my $line=<IN>){
-  print $line;
+  #print $line;
 
   if($line =~ /--/){
     if($line_no ne 0){
@@ -36,7 +36,7 @@ EOF
     my $imageh;
     ($imagew, $imageh) = imgsize("./WIDER_train/images/$file_path");
 
-    open(OUT,">WIDER_train/annotations/wider_face-$file_no".".xml");
+    open(OUT,">WIDER_train/annotations_keras/wider_face-$file_no".".xml");
     print OUT <<"EOF";
 <annotation verified="yes">
   <folder>images</folder>
