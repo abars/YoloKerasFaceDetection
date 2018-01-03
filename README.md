@@ -18,11 +18,11 @@ http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/
 
 Create WIDER_train/annotations_keras folder for keras.
 
-`perl annotation_keras.pl`
+`perl annotation_widerface_keras.pl`
 
 Create WIDER_train/annotations_darknet folder for darknet.
 
-`perl annotation_darknet.pl`
+`perl annotation_widerface_darknet.pl`
 
 # Train using Keras
 
@@ -33,6 +33,7 @@ https://github.com/experiencor/basic-yolo-keras
 Execute train.
 
 `cd basic-yolo-keras-master`
+
 `python train.py -c ../widerface_keras.json`
 
 # Train using Darknet
@@ -41,12 +42,15 @@ Download Darknet and put in the same folder.
 
 https://github.com/pjreddie/darknet
 
-Execute train.
+Compile with modify src/yolo.c and Execute train.
 
 `char *train_images = "../WIDER_train/annotations_darknet/train.txt";`
+
 `char *backup_directory = "backup/";`
 
 Execute train.
+
+`cd darknet`
 
 `./darknet yolo train ../widerface_tinyyolov1.cfg`
 
@@ -62,3 +66,27 @@ Convert to Caffe model.
 
 `python create_yolo_caffemodel.py -m yolo_train_val.prototxt -w yolo.weights -o yolo.caffemodel`
 
+# Appendix : Train viva hand detection
+
+Download viva hand datase (detectiondata folder) and put in the same folder.
+
+http://cvrr.ucsd.edu/vivachallenge/index.php/hands/hand-detection/
+
+Create detectiondata/train/pos annotations for darknet.
+
+`perl annotation_widerface_darknet.pl`
+
+Compile with modify src/yolo.c and Execute train.
+
+`char *train_images = "../detectiondata/train/pos/train.txt";`
+`char *backup_directory = "backup/";`
+
+Execute train.
+
+`cd darknet`
+
+`./darknet yolo train ../vivahand_tinyyolov1.cfg`
+
+Execute test.
+
+`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_200.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
