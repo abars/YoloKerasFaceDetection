@@ -1,4 +1,4 @@
-#Generate annotation
+#Generate annotation for keras
 
 use warnings;
 use strict;
@@ -27,9 +27,6 @@ EOF
     $file_no=$file_no+1;
     my $file_path=$line;
 
-    #my $temp_no;
-    #my $file_name;
-    #($temp_no,$file_name)=split("--",$file_path);
     chomp $file_path;
 
     my $imagew;

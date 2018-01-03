@@ -3,6 +3,7 @@
 use warnings;
 use strict;
 use Image::Size;
+use File::Copy;
 
 mkdir "WIDER_train/annotations_darknet";
 
@@ -30,9 +31,6 @@ while(my $line=<IN>){
     $file_no=$file_no+1;
     my $file_path=$line;
 
-    #my $temp_no;
-    #my $file_name;
-    #($temp_no,$file_name)=split("--",$file_path);
     chomp $file_path;
 
     ($imagew, $imageh) = imgsize("./WIDER_train/images/$file_path");
@@ -43,7 +41,7 @@ while(my $line=<IN>){
       print TRAIN "../WIDER_train/annotations_darknet/$file_no.jpg\n";        
     }
 
-    system("cp ./WIDER_train/images/$file_path WIDER_train/annotations_darknet/$file_no.jpg");
+    copy("./WIDER_train/images/$file_path","WIDER_train/annotations_darknet/$file_no.jpg");
     open(OUT,">WIDER_train/annotations_darknet/$file_no".".txt");
    next;
   }
