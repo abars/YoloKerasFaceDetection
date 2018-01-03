@@ -66,15 +66,15 @@ Convert to Caffe model.
 
 `python create_yolo_caffemodel.py -m yolo_train_val.prototxt -w yolo.weights -o yolo.caffemodel`
 
-# Appendix : Train viva hand detection
+# Appendix : Train hand detection
 
-Download viva hand datase (detectiondata folder) and put in the same folder.
+Download viva hand dataset (detectiondata folder) and put in the same folder.
 
 http://cvrr.ucsd.edu/vivachallenge/index.php/hands/hand-detection/
 
 Create detectiondata/train/pos annotations for darknet.
 
-`perl annotation_widerface_darknet.pl`
+`perl annotation_vivahand_darknet.pl`
 
 Compile with modify src/yolo.c and Execute train.
 
