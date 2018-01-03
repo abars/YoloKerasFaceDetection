@@ -66,7 +66,7 @@ Convert to Caffe model.
 
 `cd pytorch-caffe-darknet-convert`
 
-`python darknet2caffe.py ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights yolo_train_val.prototxt yolo.caffemodel`
+`python darknet2caffe.py ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights widerface.prototxt widerface.caffemodel`
 
 # Appendix : Train hand detection
 
