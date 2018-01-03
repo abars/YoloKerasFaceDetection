@@ -1,60 +1,64 @@
 # Yolo Keras Face Detection
 
-WiderFaceDataSetとBasicYoloKerasを使用して顔検出を行います。（実験中）
+Implement Face Detection using wider face dataset.(Experimental)
 
-# 準備
+# Requirements
 
-WIDER FACE Datasetをダウンロードし、wider_face_splitフォルダとWIDER_trainフォルダをannotation.plと同じフォルダに置いて下さい。
+Keras2
+
+Python 2.7
+
+# Prepare
+
+Download wider face datase (wider_face_split and WIDER_train folder) and put in the same folder.
 
 http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/
-# データセット作成
 
-以下のコマンドでWIDER_train/annotations_kerasフォルダを作成します。
+# Create dataset
+
+Create WIDER_train/annotations_keras folder for keras.
 
 `perl annotation_keras.pl`
 
-以下のコマンドでWIDER_train/annotations_darknetフォルダを作成します。
+Create WIDER_train/annotations_darknet folder for darknet.
 
 `perl annotation_darknet.pl`
 
-# Kerasでの学習
+# Train using Keras
 
-Basic Yolo Kerasをダウンロードします。
+Download BasicYoloKeras and put in the same folder.
 
 https://github.com/experiencor/basic-yolo-keras
 
-basic-yolo-keras-masterフォルダをwiderface.jsonと同じフォルダに置きます。
+Execute train.
 
-basic-yolo-keras-masterフォルダの中で以下のコマンドで学習します。
-
+`cd basic-yolo-keras-master`
 `python train.py -c ../widerface_keras.json`
 
-# Darknetでの学習
+# Train using Darknet
 
-Darknetをダウンロードします。Yolo v1で学習します。
+Download Darknet and put in the same folder.
 
 https://github.com/pjreddie/darknet
 
-src/yolo.cを書き換えてmakeします。
+Execute train.
 
 `char *train_images = "../WIDER_train/annotations_darknet/train.txt";`
 `char *backup_directory = "backup/";`
 
-学習します。
+Execute train.
 
 `./darknet yolo train ../widerface_tinyyolov1.cfg`
 
-テストします。
+Execute test.
 
 `./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg`
 
-# CaffeModelへの変換
-
-CaffeYoloをダウンロードします。
+Download CaffeYolo and put in the same folder.
 
 https://github.com/xingwangsfu/caffe-yolo
 
-モデルを変換します。
+Convert to Caffe model.
 
 `python create_yolo_caffemodel.py -m yolo_train_val.prototxt -w yolo.weights -o yolo.caffemodel`
 
