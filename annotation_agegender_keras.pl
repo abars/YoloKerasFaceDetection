@@ -6,6 +6,9 @@ use strict;
 use Image::Size;
 use File::Copy;
 
+my $ANNOTATION_FILES="./agegender/fold_";
+my $FACE_FILES="./agegender/aligned";
+
 mkdir "agegender/annotations";
 mkdir "agegender/annotations/validation";
 mkdir "agegender/annotations/train";
@@ -19,13 +22,11 @@ my $imageh;
 my $before_file="";
 
 for(my $list=0;$list<5;$list=$list+1){
-  open(IN,"<agegender/fold_"."$list"."_data.txt") or die ("agegender dataset not found");
+  open(IN,"$ANNOTATION_FILES"."$list"."_data.txt") or die ("agegender dataset not found");
 
   my $header=<IN>;
-  my $line=<IN>;
-  my $before_line="temp temp";
 
-  while(my $next_line=<IN>){
+  while(my $line=<IN>){
     #print $line;
 
     my $user_id;
@@ -42,16 +43,6 @@ for(my $list=0;$list<5;$list=$list+1){
     my $fiducial_score;
 
     ($user_id,$original_image,$face_id,$age,$gender,$x,$y,$dx,$dy,$tilt_ang,$fiducial_yaw_angle,$fiducial_score)=split("\t",$line);
-
-    my ($before_user_id,$before_image)=split("\t",$before_line);
-    my ($next_user_id,$next_image)=split("\t",$next_line);
-    $before_line=$line;
-    $line=$next_line;
-    if(($user_id eq $next_user_id and $original_image eq $next_image) or ($user_id eq $before_user_id and $original_image eq $before_image)){
-      #Skip multi person images from dataset
-      #print "$user_id\n";
-      next;
-    }
 
     $x=$x+$dx/2;
     $y=$y+$dy/2;
@@ -123,14 +114,14 @@ for(my $list=0;$list<5;$list=$list+1){
 
     my $label="$category"."_"."$category_label"."_"."$gender";
 
-    my $thumb_dir="./agegender/aligned/$user_id/";
+    my $thumb_dir="$FACE_FILES/$user_id/";
 
     opendir(THUMB, "$thumb_dir") or die "usage: $0 thumb_dir\n";
     my $filepath="";
     foreach my $dir (readdir(THUMB)) {
       next if ($dir eq '.' || $dir eq '..');
       next if ($dir eq '.DS_Store');
-      if($dir =~ /$original_image/){
+      if($dir =~ /$face_id\.$original_image/){
         $filepath=$dir;
         last;
       }
@@ -151,13 +142,13 @@ for(my $list=0;$list<5;$list=$list+1){
       #}
       $before_file=$original_image;
       #$line_no=1;
-      ($imagew, $imageh) = imgsize("./agegender/aligned/$user_id/$filepath");
+      ($imagew, $imageh) = imgsize("$FACE_FILES/$user_id/$filepath");
 
       $file_no=$file_no+1;
       if($file_no%4 eq 0){
-        copy("./agegender/aligned/$user_id/$filepath","agegender/annotations/validation/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/validation/$label/$filepath");
       }else{
-        copy("./agegender/aligned/$user_id/$filepath","agegender/annotations/train/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/train/$label/$filepath");
       }
     }
     
