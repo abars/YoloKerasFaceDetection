@@ -92,3 +92,28 @@ Execute train.
 Execute test.
 
 `./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_200.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
+
+# Appendix : Train age and gender detection
+
+Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset (agegender folder)  and put in the same folder.
+
+https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
+
+Create agegender/ annotations for darknet.
+
+`perl annotation_agegender_darknet.pl`
+
+Compile with modify src/yolo.c.
+
+`char *train_images = "../agegender/annotations/train.txt";`
+`char *backup_directory = "backup/";`
+
+Execute train.
+
+`cd darknet`
+
+`./darknet yolo train ../agegender_tinyyolov1.cfg`
+
+Execute test.
+
+`./darknet yolo test ../agegender_tinyyolov1.cfg ./backup/agegender_tinyyolov1_200.weights ../agegender/annotations/1_0000003_0_0_0_6.png`
