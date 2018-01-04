@@ -7,7 +7,7 @@ use Image::Size;
 use File::Copy;
 
 mkdir "agegender/annotations";
-mkdir "agegender/annotations/test";
+mkdir "agegender/annotations/validation";
 mkdir "agegender/annotations/train";
 
 my $file_no=0;
@@ -141,7 +141,7 @@ for(my $list=0;$list<5;$list=$list+1){
       next;
     }
 
-    mkdir "./agegender/annotations/test/$label";
+    mkdir "./agegender/annotations/validation/$label";
     mkdir "./agegender/annotations/train/$label";
 
     if($before_file ne $original_image){
@@ -155,7 +155,7 @@ for(my $list=0;$list<5;$list=$list+1){
 
       $file_no=$file_no+1;
       if($file_no%4 eq 0){
-        copy("./agegender/aligned/$user_id/$filepath","agegender/annotations/test/$label/$filepath");
+        copy("./agegender/aligned/$user_id/$filepath","agegender/annotations/validation/$label/$filepath");
       }else{
         copy("./agegender/aligned/$user_id/$filepath","agegender/annotations/train/$label/$filepath");
       }

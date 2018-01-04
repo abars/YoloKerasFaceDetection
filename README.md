@@ -105,3 +105,6 @@ Create agegender/ annotations for keras.
 
 Run classifier task using keras.
 
+`python agegender_train.py`
+
+
