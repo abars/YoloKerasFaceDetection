@@ -99,21 +99,9 @@ Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset 
 
 https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
 
-Create agegender/ annotations for darknet.
+Create agegender/ annotations for keras.
 
-`perl annotation_agegender_darknet.pl`
+`perl annotation_agegender_keras.pl`
 
-Compile with modify src/yolo.c.
+Run classifier task using keras.
 
-`char *train_images = "../agegender/annotations/train.txt";`
-`char *backup_directory = "backup/";`
-
-Execute train.
-
-`cd darknet`
-
-`./darknet yolo train ../agegender_tinyyolov1.cfg`
-
-Execute test.
-
-`./darknet yolo test ../agegender_tinyyolov1.cfg ./backup/agegender_tinyyolov1_200.weights ../agegender/annotations/1_0000003_0_0_0_6.png`
