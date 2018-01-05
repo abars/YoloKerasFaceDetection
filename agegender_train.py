@@ -38,13 +38,14 @@ NUM_TRAINING = 14490*3/4
 NUM_VALIDATION = 14490*1/4
 
 #MODEL_HDF5='train_vgg16.hdf5'
-#MODEL_HDF5='train_small_cnn2.hdf5'
-#MODEL_HDF5='train_small_cnn.hdf5'
-MODEL_HDF5='train_simple_cnn.hdf5'
+#MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
+MODEL_HDF5='train_small_cnn.hdf5'
+#MODEL_HDF5='train_simple_cnn.hdf5'
 
 #VOC model
 if(MODEL_HDF5=='train_vgg16'):
    IMAGE_SIZE = 224
+   EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
    base_model = VGG16(weights='imagenet', include_top=False,input_tensor=input_tensor)
    x = base_model.output
@@ -56,8 +57,9 @@ if(MODEL_HDF5=='train_vgg16'):
    #   layer.trainable = False
    for layer in base_model.layers[:15]:
       layer.trainable = False
-elif(MODEL_HDF5=='train_small_cnn2.hdf5'):
+elif(MODEL_HDF5=='train_small_cnn_with_pooling.hdf5'):
    IMAGE_SIZE = 32
+   EPOCS = 50
    model = Sequential()
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
    model.add(InputLayer(input_shape=input_shape))
@@ -75,6 +77,7 @@ elif(MODEL_HDF5=='train_small_cnn2.hdf5'):
    model.add(Activation('softmax',name='predictions'))
 elif(MODEL_HDF5=='train_small_cnn.hdf5'):
    IMAGE_SIZE = 32
+   EPOCS = 50
    model = Sequential()
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
    model.add(InputLayer(input_shape=input_shape))
@@ -91,6 +94,7 @@ elif(MODEL_HDF5=='train_small_cnn.hdf5'):
    model.add(Activation('softmax',name='predictions'))
 elif(MODEL_HDF5=='train_simple_cnn.hdf5'):
    IMAGE_SIZE = 64
+   EPOCS = 50
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
 
    model = Sequential()
@@ -180,7 +184,7 @@ validation_generator = test_datagen.flow_from_directory(
 
 fit = model.fit_generator(train_generator,
    steps_per_epoch=NUM_TRAINING//BATCH_SIZE,
-   epochs=50,
+   epochs=EPOCS,
    verbose=1,
    validation_data=validation_generator,
    validation_steps=NUM_VALIDATION//BATCH_SIZE,
