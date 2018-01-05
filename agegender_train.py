@@ -31,17 +31,18 @@ import matplotlib.pyplot as plt
 # Model
 # ----------------------------------------------
 
-NUM_TRAINING = 14490*3/4
-NUM_VALIDATION = 14490*1/4
+NUM_TRAINING = 8634
+NUM_VALIDATION = 2889
+BATCH_SIZE = 16
 
-#ANNOTATIONS=''
+ANNOTATIONS=''
 #ANNOTATIONS='gender/'
-ANNOTATIONS='age/'
+#ANNOTATIONS='age/'
 
-#MODEL_HDF5='train_vgg16.hdf5'
+MODEL_HDF5='train_vgg16.hdf5'
 #MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
 #MODEL_HDF5='train_small_cnn.hdf5'
-MODEL_HDF5='train_simple_cnn.hdf5'
+#MODEL_HDF5='train_simple_cnn.hdf5'
 
 PLOT_FILE='./fit.png'
 
@@ -52,11 +53,8 @@ if(ANNOTATIONS=='age/'):
 if(ANNOTATIONS=='gender/'):
   N_CATEGORIES=2
 
-#Batch
-BATCH_SIZE = N_CATEGORIES
-
 #VOC model
-if(MODEL_HDF5=='train_vgg16'):
+if(MODEL_HDF5=='train_vgg16.hdf5'):
    IMAGE_SIZE = 224
    EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
@@ -66,8 +64,6 @@ if(MODEL_HDF5=='train_vgg16'):
    x = Dense(1024, activation='relu')(x)
    predictions = Dense(N_CATEGORIES, activation='softmax')(x)
    model = Model(inputs=base_model.input, outputs=predictions)
-   #for layer in base_model.layers:
-   #   layer.trainable = False
    for layer in base_model.layers[:15]:
       layer.trainable = False
 elif(MODEL_HDF5=='train_small_cnn_with_pooling.hdf5'):

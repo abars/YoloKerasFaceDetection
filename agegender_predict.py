@@ -19,17 +19,20 @@ import keras2caffe
 # converting
 # ----------------------------------------------
 
+MODEL_HDF5='train_vgg16.hdf5'
 #MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
 #MODEL_HDF5='train_small_cnn.hdf5'
-MODEL_HDF5='train_simple_cnn.hdf5'
+#MODEL_HDF5='train_simple_cnn.hdf5'
 
-#ANNOTATIONS='agegender_words.txt'
-ANNOTATIONS='agegender_age_words.txt'
+ANNOTATIONS='agegender_words.txt'
+#ANNOTATIONS='agegender_age_words.txt'
 #ANNOTATIONS='agegender_gender_words.txt'
 
 IMAGE_SIZE = 32
 if(MODEL_HDF5=='train_simple_cnn.hdf5'):
 	IMAGE_SIZE = 64
+if(MODEL_HDF5=='train_vgg16.hdf5'):
+	IMAGE_SIZE = 224
 
 keras_model = load_model(MODEL_HDF5)
 keras_model.summary()
