@@ -1,0 +1,16 @@
+age 0-2 male
+age 4-6 male
+age 8-13 male
+age 15-20 male
+age 25-32 male
+age 38-43 male
+age 48-53 male
+age 60- male
+age 0-2 female
+age 4-6 female
+age 8-13 female
+age 15-20 female
+age 25-32 female
+age 38-43 female
+age 48-53 female
+age 60- female

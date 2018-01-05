@@ -30,7 +30,8 @@ NUM_TRAINING = 14490*3/4
 NUM_VALIDATION = 14490*1/4
 
 #MODEL_HDF5='train_vgg16.hdf5'
-MODEL_HDF5='train_small_cnn.hdf5'
+MODEL_HDF5='train_small_cnn2.hdf5'
+#MODEL_HDF5='train_small_cnn.hdf5'
 
 #VOC model
 if(MODEL_HDF5=='train_vgg16'):
@@ -46,6 +47,23 @@ if(MODEL_HDF5=='train_vgg16'):
    #   layer.trainable = False
    for layer in base_model.layers[:15]:
       layer.trainable = False
+elif(MODEL_HDF5=='train_small_cnn2.hdf5'):
+   IMAGE_SIZE = 32
+   model = Sequential()
+   input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
+   model.add(InputLayer(input_shape=input_shape))
+   model.add(Convolution2D(32, kernel_size=(3, 3)))
+   model.add(Activation('relu'))
+   model.add(Convolution2D(64, (3, 3)))
+   model.add(Activation('relu'))
+   model.add(MaxPooling2D(pool_size=(2, 2)))
+   model.add(Dropout(0.25))
+   model.add(Flatten())
+   model.add(Dense(128))
+   model.add(Activation('relu'))
+   model.add(Dropout(0.5))
+   model.add(Dense(N_CATEGORIES))
+   model.add(Activation('softmax'))
 elif(MODEL_HDF5=='train_small_cnn.hdf5'):
    IMAGE_SIZE = 32
    model = Sequential()
