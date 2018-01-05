@@ -13,6 +13,16 @@ mkdir "agegender/annotations";
 mkdir "agegender/annotations/validation";
 mkdir "agegender/annotations/train";
 
+mkdir "agegender/annotations/gender";
+mkdir "agegender/annotations/gender";
+mkdir "agegender/annotations/gender/validation";
+mkdir "agegender/annotations/gender/train";
+
+mkdir "agegender/annotations/age";
+mkdir "agegender/annotations/age";
+mkdir "agegender/annotations/age/validation";
+mkdir "agegender/annotations/age/train";
+
 my $file_no=0;
 my $line_no=0;
 
@@ -113,6 +123,8 @@ for(my $list=0;$list<5;$list=$list+1){
     }
 
     my $label="$category"."_"."$category_label"."_"."$gender";
+    my $label_age="$category_label";
+    my $label_gender="$gender";
 
     my $thumb_dir="$FACE_FILES/$user_id/";
 
@@ -135,6 +147,12 @@ for(my $list=0;$list<5;$list=$list+1){
     mkdir "./agegender/annotations/validation/$label";
     mkdir "./agegender/annotations/train/$label";
 
+    mkdir "./agegender/annotations/age/validation/$label_age";
+    mkdir "./agegender/annotations/age/train/$label_age";
+
+    mkdir "./agegender/annotations/gender/validation/$label_gender";
+    mkdir "./agegender/annotations/gender/train/$label_gender";
+
     if($before_file ne $original_image){
       #if($line_no ne 0){
       #  close(OUT);
@@ -147,8 +165,12 @@ for(my $list=0;$list<5;$list=$list+1){
       $file_no=$file_no+1;
       if($file_no%4 eq 0){
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/validation/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/age/validation/$label_age/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/gender/validation/$label_gender/$filepath");
       }else{
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/train/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/age/train/$label_age/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/gender/train/$label_gender/$filepath");
       }
     }
     

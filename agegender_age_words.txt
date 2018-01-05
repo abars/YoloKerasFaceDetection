@@ -1,0 +1,8 @@
+age 0-2
+age 4-6
+age 8-13
+age 15-20
+age 25-32
+age 38-43
+age 48-53
+age 60-

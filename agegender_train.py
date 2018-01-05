@@ -31,16 +31,29 @@ import matplotlib.pyplot as plt
 # Model
 # ----------------------------------------------
 
-N_CATEGORIES  = 16
-BATCH_SIZE = 16
-
 NUM_TRAINING = 14490*3/4
 NUM_VALIDATION = 14490*1/4
 
+#ANNOTATIONS=''
+#ANNOTATIONS='gender/'
+ANNOTATIONS='age/'
+
 #MODEL_HDF5='train_vgg16.hdf5'
 #MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
-MODEL_HDF5='train_small_cnn.hdf5'
-#MODEL_HDF5='train_simple_cnn.hdf5'
+#MODEL_HDF5='train_small_cnn.hdf5'
+MODEL_HDF5='train_simple_cnn.hdf5'
+
+PLOT_FILE='./fit.png'
+
+#Size
+N_CATEGORIES = 16
+if(ANNOTATIONS=='age/'):
+  N_CATEGORIES=8
+if(ANNOTATIONS=='gender/'):
+  N_CATEGORIES=2
+
+#Batch
+BATCH_SIZE = N_CATEGORIES
 
 #VOC model
 if(MODEL_HDF5=='train_vgg16'):
@@ -163,7 +176,7 @@ test_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-   'agegender/annotations/train',
+   'agegender/annotations/'+ANNOTATIONS+'train',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -171,7 +184,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = test_datagen.flow_from_directory(
-   'agegender/annotations/validation',
+   'agegender/annotations/'+ANNOTATIONS+'validation',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -220,5 +233,5 @@ def plot_history_acc(fit):
 
 plot_history_loss(fit)
 plot_history_acc(fit)
-fig.savefig('./fit.png')
+fig.savefig(PLOT_FILE)
 plt.close()

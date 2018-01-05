@@ -20,8 +20,16 @@ import keras2caffe
 # ----------------------------------------------
 
 #MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
-MODEL_HDF5='train_small_cnn.hdf5'
-#MODEL_HDF5='train_simple_cnn.hdf5'
+#MODEL_HDF5='train_small_cnn.hdf5'
+MODEL_HDF5='train_simple_cnn.hdf5'
+
+#ANNOTATIONS='agegender_words.txt'
+ANNOTATIONS='agegender_age_words.txt'
+#ANNOTATIONS='agegender_gender_words.txt'
+
+IMAGE_SIZE = 32
+if(MODEL_HDF5=='train_simple_cnn.hdf5'):
+	IMAGE_SIZE = 64
 
 keras_model = load_model(MODEL_HDF5)
 keras_model.summary()
@@ -36,7 +44,7 @@ net  = caffe.Net('agegender.prototxt', 'agegender.caffemodel', caffe.TEST)
 
 img = cv2.imread('agegender/annotations/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
 #img = cv2.imread('myself.jpg')
-img = cv2.resize(img, (32, 32))
+img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
 img = img[...,::-1]  #RGB 2 BGR
 
 data = np.array(img, dtype=np.float32)
@@ -50,7 +58,7 @@ data /= 255
 pred = keras_model.predict(data)[0]
 prob = np.max(pred)
 cls = pred.argmax()
-lines=open('agegender_words.txt').readlines()
+lines=open(ANNOTATIONS).readlines()
 print prob, cls, lines[cls]
 
 data = data.transpose((0, 3, 1, 2))
@@ -59,6 +67,6 @@ out = net.forward_all(data = data)
 pred = out['predictions']
 prob = np.max(pred)
 cls = pred.argmax()
-lines=open('agegender_words.txt').readlines()
+lines=open(ANNOTATIONS).readlines()
 print prob, cls, lines[cls]
 
