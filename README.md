@@ -1,10 +1,12 @@
 # Yolo Keras Face Detection
 
-Implement Face Detection using wider face dataset.(Experimental)
+Implement Face Detection using wider face dataset. (Experimental)
 
 # Requirements
 
 Keras2
+
+Darknet
 
 Python 2.7
 
@@ -48,6 +50,10 @@ Compile with modify src/yolo.c.
 
 `char *backup_directory = "backup/";`
 
+`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
+
+`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, 1, frame_skip, prefix, out_filename);`
+
 Execute train.
 
 `cd darknet`
@@ -81,7 +87,12 @@ Create detectiondata/train/pos annotations for darknet.
 Compile with modify src/yolo.c.
 
 `char *train_images = "../detectiondata/train/pos/train.txt";`
+
 `char *backup_directory = "backup/";`
+
+`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
+
+`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, 4, frame_skip, prefix, out_filename);`
 
 Execute train.
 
@@ -91,7 +102,11 @@ Execute train.
 
 Execute test.
 
-`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_200.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
+`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_8000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
+
+Execute demo.
+
+`./darknet yolo demo ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_8000.weights`
 
 # Appendix : Train age and gender detection
 
