@@ -60,9 +60,9 @@ while(my $line=<IN>){
     my $y=$ymin+$h/2;
     my $category=0;
     $x=1.0*$x/$imagew;
-    $y=1.0*$y/$imagew;
+    $y=1.0*$y/$imageh;
     $w=1.0*$w/$imagew;
-    $h=1.0*$h/$imagew;
+    $h=1.0*$h/$imageh;
     print OUT "$category $x $y $w $h\n";
   }
 }

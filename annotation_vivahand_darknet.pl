@@ -7,7 +7,7 @@ use Image::Size;
 use File::Copy;
 use File::Spec::Functions qw/catfile/;
 
-for(my $test=0;$test<2;$test=$test+1){
+for(my $test=0;$test<1;$test=$test+1){ #set 1 because not exist test/posGt
   my $folder="train";
   if($test eq 1){
     $folder="test";
@@ -60,9 +60,9 @@ for(my $test=0;$test<2;$test=$test+1){
       my $x=$xmin+$w/2;
       my $y=$ymin+$h/2;
       $x=1.0*$x/$imagew;
-      $y=1.0*$y/$imagew;
+      $y=1.0*$y/$imageh;
       $w=1.0*$w/$imagew;
-      $h=1.0*$h/$imagew;
+      $h=1.0*$h/$imageh;
 
       my $category=0;
       if($category_name eq "leftHand_driver"){
