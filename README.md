@@ -107,4 +107,8 @@ Run classifier task using keras.
 
 `python agegender_train.py`
 
+Test classifier task using keras.
+
+`python agegender_predict.py`
+
 
