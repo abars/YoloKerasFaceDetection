@@ -22,6 +22,8 @@ Darknet
 
 Python 2.7
 
+Perl
+
 ## Implement Environment
 
 Mac Pro 2013
@@ -106,7 +108,7 @@ Convert to Caffe model.
 
 `python darknet2caffe.py ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights widerface.prototxt widerface.caffemodel`
 
-# Hand classification
+# Hand detection
 
 ## Prepare
 
