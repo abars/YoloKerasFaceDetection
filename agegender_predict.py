@@ -48,7 +48,7 @@ net  = caffe.Net('agegender.prototxt', 'agegender.caffemodel', caffe.TEST)
 img = cv2.imread('agegender/annotations/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
 #img = cv2.imread('myself.jpg')
 img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-img = img[...,::-1]  #RGB 2 BGR
+img = img[...,::-1]  #BGR 2 RGB
 
 data = np.array(img, dtype=np.float32)
 data.shape = (1,) + data.shape
