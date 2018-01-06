@@ -28,9 +28,9 @@ import matplotlib.pyplot as plt
 # MODE
 # ----------------------------------------------
 
-ANNOTATIONS=''
+ANNOTATIONS='agegender'
 #ANNOTATIONS='gender'
-#ANNOTATION='age'
+#ANNOTATIONS='age'
 
 MODELS="vgg16"
 #MODELS="small_cnn"
@@ -43,9 +43,10 @@ MODELS="vgg16"
 if len(sys.argv) == 2:
   ANNOTATIONS = sys.argv[1]
 else:
-  print("usage: python agegender_train.py [/gender/age]")
+  print("usage: python agegender_train.py [agegender/gender/age]")
+  sys.exit(1)
 
-if ANNOTATIONS!="" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
   print("unknown annotation mode");
   sys.exit(1)
 
@@ -57,19 +58,12 @@ NUM_TRAINING = 8634
 NUM_VALIDATION = 2889
 BATCH_SIZE = 16
 
-PLOT_FILE='./fit.png'
-
-if ANNOTATIONS!="":
-  MODELS_PATH="_"+MODELS
-  ANNOTATION_PATH=ANNOTATIONS+"/"
-else:
-  MODELS_PATH=""
-  ANNOTATION_PATH=""
-
-MODEL_HDF5='train_'+ANNOTATIONS+MODELS_PATH+'.hdf5'
+PLOT_FILE='fit_'+ANNOTATIONS+'_'+MODELS+'.png'
+MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 
 #Size
-N_CATEGORIES = 16
+if ANNOTATIONS=='agegender':
+  N_CATEGORIES = 16
 if ANNOTATIONS=='age':
   N_CATEGORIES=8
 if ANNOTATIONS=='gender':
@@ -176,7 +170,7 @@ test_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATION_PATH+'train',
+   'agegender/annotations/'+ANNOTATIONS+'/train',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -184,7 +178,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = test_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATION_PATH+'validation',
+   'agegender/annotations/'+ANNOTATIONS+'/validation',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',

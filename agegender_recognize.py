@@ -1,4 +1,6 @@
-#Recognize gender from camera face
+# ----------------------------------------------
+# Recognize gender from camera face
+# ----------------------------------------------
 
 import os
 import cv2
@@ -11,18 +13,54 @@ plaidml.keras.install_backend()
 from keras.models import load_model
 from keras.preprocessing import image
 
-MODEL_HDF5='train_vgg16.hdf5'
-#MODEL_HDF5='train_small_cnn.hdf5'
+# ----------------------------------------------
+# MODE
+# ----------------------------------------------
 
-if(MODEL_HDF5 == 'train_vgg16.hdf5'):
+ANNOTATIONS='agegender'
+#ANNOTATIONS='gender'
+#ANNOTATION='age'
+
+MODELS="vgg16"
+#MODELS="small_cnn"
+#MODELS="simple_cnn"
+
+# ----------------------------------------------
+# Argument
+# ----------------------------------------------
+
+if len(sys.argv) == 2:
+  ANNOTATIONS = sys.argv[1]
+else:
+  print("usage: python agegender_recognize.py [agegender/gender/age]")
+  sys.exit(1)
+
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
+  print("unknown annotation mode");
+  sys.exit(1)
+
+# ----------------------------------------------
+# Models
+# ----------------------------------------------
+
+MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+ANNOTATION_WORDS='agegender_'+ANNOTATIONS+'_words.txt'
+
+if(MODELS == 'vgg16'):
 	IMAGE_SIZE = 224
-elif(MODEL_HDF5 == 'train_small_cnn.hdf5'):
+elif(MODELS == 'small_cnn'):
 	IMAGE_SIZE = 32
+elif(MODELS == 'simple_cnn'):
+	IMAGE_SIZE = 64
 else:
 	raise Exception('invalid model name')
 
 model = load_model(MODEL_HDF5)
 model.summary()
+
+# ----------------------------------------------
+# Classifier
+# ----------------------------------------------
 
 classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
@@ -71,7 +109,7 @@ while True:
 		prob = np.max(pred)
 		cls = pred.argmax()
 
-		lines=open('agegender_words.txt').readlines()
+		lines=open(ANNOTATION_WORDS).readlines()
 		print prob, cls, lines[cls]
 
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)

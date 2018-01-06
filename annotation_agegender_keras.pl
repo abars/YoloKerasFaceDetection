@@ -9,9 +9,9 @@ use File::Copy;
 my $ANNOTATION_FILES="./agegender/fold_";
 my $FACE_FILES="./agegender/aligned";
 
-mkdir "agegender/annotations";
-mkdir "agegender/annotations/validation";
-mkdir "agegender/annotations/train";
+mkdir "agegender/annotations/agegender/";
+mkdir "agegender/annotations/agegender/validation";
+mkdir "agegender/annotations/agegender/train";
 
 mkdir "agegender/annotations/gender";
 mkdir "agegender/annotations/gender";
@@ -144,8 +144,8 @@ for(my $list=0;$list<5;$list=$list+1){
       next;
     }
 
-    mkdir "./agegender/annotations/validation/$label";
-    mkdir "./agegender/annotations/train/$label";
+    mkdir "./agegender/annotations/agegender/validation/$label";
+    mkdir "./agegender/annotations/agegender/train/$label";
 
     mkdir "./agegender/annotations/age/validation/$label_age";
     mkdir "./agegender/annotations/age/train/$label_age";
@@ -164,11 +164,11 @@ for(my $list=0;$list<5;$list=$list+1){
 
       $file_no=$file_no+1;
       if($file_no%4 eq 0){
-        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/validation/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/agegender/validation/$label/$filepath");
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/age/validation/$label_age/$filepath");
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/gender/validation/$label_gender/$filepath");
       }else{
-        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/train/$label/$filepath");
+        copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/agegender/train/$label/$filepath");
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/age/train/$label_age/$filepath");
         copy("$FACE_FILES/$user_id/$filepath","agegender/annotations/gender/train/$label_gender/$filepath");
       }
