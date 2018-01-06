@@ -4,9 +4,6 @@
 
 import os.path,sys
 
-#sys.path.append(os.path.abspath(os.path.dirname(__file__))+'/../../')
-#os.environ['KERAS_BACKEND'] = 'theano'
-
 import plaidml.keras
 plaidml.keras.install_backend()
 
@@ -28,6 +25,31 @@ import keras.callbacks
 import matplotlib.pyplot as plt
 
 # ----------------------------------------------
+# MODE
+# ----------------------------------------------
+
+ANNOTATIONS=''
+#ANNOTATIONS='gender'
+#ANNOTATION='age'
+
+MODELS="vgg16"
+#MODELS="small_cnn"
+#MODELS="simple_cnn"
+
+# ----------------------------------------------
+# Argument
+# ----------------------------------------------
+
+if len(sys.argv) == 2:
+  ANNOTATIONS = sys.argv[1]
+else:
+  print("usage: python agegender_train.py [/gender/age]")
+
+if ANNOTATIONS!="" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
+  print("unknown annotation mode");
+  sys.exit(1)
+
+# ----------------------------------------------
 # Model
 # ----------------------------------------------
 
@@ -35,26 +57,26 @@ NUM_TRAINING = 8634
 NUM_VALIDATION = 2889
 BATCH_SIZE = 16
 
-ANNOTATIONS=''
-#ANNOTATIONS='gender/'
-#ANNOTATIONS='age/'
-
-MODEL_HDF5='train_vgg16.hdf5'
-#MODEL_HDF5='train_small_cnn_with_pooling.hdf5'
-#MODEL_HDF5='train_small_cnn.hdf5'
-#MODEL_HDF5='train_simple_cnn.hdf5'
-
 PLOT_FILE='./fit.png'
+
+if ANNOTATIONS!="":
+  MODELS_PATH="_"+MODELS
+  ANNOTATION_PATH=ANNOTATIONS+"/"
+else:
+  MODELS_PATH=""
+  ANNOTATION_PATH=""
+
+MODEL_HDF5='train_'+ANNOTATIONS+MODELS_PATH+'.hdf5'
 
 #Size
 N_CATEGORIES = 16
-if(ANNOTATIONS=='age/'):
+if ANNOTATIONS=='age':
   N_CATEGORIES=8
-if(ANNOTATIONS=='gender/'):
+if ANNOTATIONS=='gender':
   N_CATEGORIES=2
 
 #VOC model
-if(MODEL_HDF5=='train_vgg16.hdf5'):
+if(MODELS=='vgg16'):
    IMAGE_SIZE = 224
    EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
@@ -66,25 +88,7 @@ if(MODEL_HDF5=='train_vgg16.hdf5'):
    model = Model(inputs=base_model.input, outputs=predictions)
    for layer in base_model.layers[:15]:
       layer.trainable = False
-elif(MODEL_HDF5=='train_small_cnn_with_pooling.hdf5'):
-   IMAGE_SIZE = 32
-   EPOCS = 50
-   model = Sequential()
-   input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
-   model.add(InputLayer(input_shape=input_shape))
-   model.add(Convolution2D(32, kernel_size=(3, 3)))
-   model.add(Activation('relu'))
-   model.add(Convolution2D(64, (3, 3)))
-   model.add(Activation('relu'))
-   model.add(MaxPooling2D(pool_size=(2, 2)))
-   model.add(Dropout(0.25))
-   model.add(Flatten())
-   model.add(Dense(128))
-   model.add(Activation('relu'))
-   model.add(Dropout(0.5))
-   model.add(Dense(N_CATEGORIES))
-   model.add(Activation('softmax',name='predictions'))
-elif(MODEL_HDF5=='train_small_cnn.hdf5'):
+elif(MODEL_HDF5=='small_cnn'):
    IMAGE_SIZE = 32
    EPOCS = 50
    model = Sequential()
@@ -101,7 +105,7 @@ elif(MODEL_HDF5=='train_small_cnn.hdf5'):
    model.add(Dropout(0.5))
    model.add(Dense(N_CATEGORIES))
    model.add(Activation('softmax',name='predictions'))
-elif(MODEL_HDF5=='train_simple_cnn.hdf5'):
+elif(MODEL_HDF5=='simple_cnn'):
    IMAGE_SIZE = 64
    EPOCS = 50
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
@@ -172,7 +176,7 @@ test_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATIONS+'train',
+   'agegender/annotations/'+ANNOTATION_PATH+'train',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -180,7 +184,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = test_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATIONS+'validation',
+   'agegender/annotations/'+ANNOTATION_PATH+'validation',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
