@@ -192,7 +192,7 @@ Test classifier task using keras.
 
 `python agegender_predict.py gender`
 
-Demo classifier task using keras.
+Demo classifier task using keras and opencv.
 
 `python agegender_recognize.py agegender`
 
@@ -200,4 +200,7 @@ Demo classifier task using keras.
 
 `python agegender_recognize.py gender`
 
+Demo classifier task using keras and yolo.
+
+`python agegender_yolo.py keras`
 

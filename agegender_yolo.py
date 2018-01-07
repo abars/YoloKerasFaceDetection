@@ -15,6 +15,9 @@ plaidml.keras.install_backend()
 from keras.models import load_model
 from keras.preprocessing import image
 
+DEMO_IMG=""
+#DEMO_IMG="dancing.jpg"
+
 def interpret_output(output, img_width, img_height):
 	classes = ["face"]
 	w_img = img_width
@@ -79,7 +82,7 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-def show_results(img,results, img_width, img_height, net_age, net_gender, model_age):
+def show_results(img,results, img_width, img_height, net_age, net_gender, model_age, model_gender):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -137,54 +140,89 @@ def show_results(img,results, img_width, img_height, net_age, net_gender, model_
 			continue
 
 		IMAGE_SIZE=227
-
-		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
-
-		img = np.expand_dims(img, axis=0)
-		img = img - (104,117,123) #BGR mean value of VGG16
-
-		img = img.transpose((0, 3, 1, 2))
-
-		out = net_age.forward_all(data = img)
-		pred_age = out['prob']
-		prob_age = np.max(pred_age)
-		cls_age = pred_age.argmax()
-		lines_age=open('agegender_age_words.txt').readlines()
-
-		out = net_gender.forward_all(data = img)
-		pred_gender = out['prob']
-		prob_gender = np.max(pred_gender)
-		cls_gender = 1-pred_gender.argmax()
-		lines_gender=open('agegender_gender_words.txt').readlines()
-
 		IMAGE_SIZE_KERAS=224
 
-		img = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
-		img = img[::-1, :, ::-1].copy()	#BGR to RGB
+		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
 		img = np.expand_dims(img, axis=0)
-		img = img / 255.0
-		pred_age_keras = model_age.predict(img)[0]
-		prob_age_keras = np.max(pred_age_keras)
-		cls_age_keras = pred_age_keras.argmax()
+		img = img - (104,117,123) #BGR mean value of VGG16
+		img = img.transpose((0, 3, 1, 2))
+
+		img_keras = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
+		img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
+		img_keras = np.expand_dims(img_keras, axis=0)
+		img_keras = img_keras / 255.0
 
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
-		cv2.putText(target_image, "Caffe : %.2f" % prob_age +lines_age[cls_age], (x2,y2+h2+16), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-		cv2.putText(target_image, "Caffe : %.2f" % prob_gender +lines_gender[cls_gender], (x2,y2+h2+32), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-		cv2.putText(target_image, "Keras : %.2f" % prob_age_keras +lines_age[cls_age_keras], (x2,y2+h2+48), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+		offset=16
+
+		lines_age=open('agegender_age_words.txt').readlines()
+		lines_gender=open('agegender_gender_words.txt').readlines()
+
+		if(net_age!=None):
+			out = net_age.forward_all(data = img)
+			pred_age = out['prob']
+			prob_age = np.max(pred_age)
+			cls_age = pred_age.argmax()
+			cv2.putText(target_image, "Caffe : %.2f" % prob_age + " " + lines_age[cls_age], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			offset=offset+16
+
+		if(net_gender!=None):
+			out = net_gender.forward_all(data = img)
+			pred_gender = out['prob']
+			prob_gender = np.max(pred_gender)
+			cls_gender = 1-pred_gender.argmax()
+			cv2.putText(target_image, "Caffe : %.2f" % prob_gender + " " + lines_gender[cls_gender], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			offset=offset+16
+
+		if(model_age!=None):
+			pred_age_keras = model_age.predict(img_keras)[0]
+			prob_age_keras = np.max(pred_age_keras)
+			cls_age_keras = pred_age_keras.argmax()
+			cv2.putText(target_image, "Keras : %.2f" % prob_age_keras + " " + lines_age[cls_age_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			offset=offset+16
+
+		if(model_gender!=None):
+			pred_gender_keras = model_gender.predict(img_keras)[0]
+			prob_gender_keras = np.max(pred_gender_keras)
+			cls_gender_keras = 1-pred_gender_keras.argmax()
+			cv2.putText(target_image, "Keras : %.2f" % prob_gender_keras + " " + lines_gender[cls_gender_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			offset=offset+16
 
 	cv2.imshow('YOLO detection',img_cp)
-	cv2.waitKey(1000)
+	
+	if(DEMO_IMG!=""):
+		cv2.imwrite("detection.jpg", img_cp)
+		cv2.waitKey(1000)
 
 def main(argv):
+	MODE="caffe"
+	if len(sys.argv) == 2:
+		MODE = sys.argv[1]
+	else:
+		print("usage: python reference_yolo.py [caffe/keras/caffekeras]")
+		sys.exit(1)
+	if(MODE!="caffe" and MODE!="keras" and MODE!="caffekeras"):
+		print("Unknown mode "+MODE)
+		sys.exit(1)
+
 	model_filename = 'face.prototxt'
 	weight_filename = 'face.caffemodel'
 
 	net = caffe.Net(model_filename, weight_filename, caffe.TEST)
-	net_age  = caffe.Net('deploy_age.prototxt', 'age_net.caffemodel', caffe.TEST)
-	net_gender  = caffe.Net('deploy_gender.prototxt', 'gender_net.caffemodel', caffe.TEST)
 
-	MODEL_HDF5='train_age_vgg16.hdf5'
-	model_age = load_model(MODEL_HDF5)
+	if(MODE == "caffe" or MODE == "caffekeras"):
+		net_age  = caffe.Net('deploy_age.prototxt', 'age_net.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net('deploy_gender.prototxt', 'gender_net.caffemodel', caffe.TEST)
+	else:
+		net_age=None
+		net_gender=None
+
+	if(MODE == "keras" or MODE == "caffekeras"):
+		model_age = load_model('train_age_vgg16.hdf5')
+		model_gender = None
+	else:
+		model_age = None
+		model_gender = None
 
 	while True:
 		cap = cv2.VideoCapture(0)
@@ -193,15 +231,16 @@ def main(argv):
 		img = img[...,::-1]  #BGR 2 RGB
 		inputs = img.copy() / 255.0
 		
-		#img = caffe.io.load_image('myself.jpg') # load the image using caffe io
-		#inputs = img
+		if(DEMO_IMG!=""):
+			img = caffe.io.load_image(DEMO_IMG) # load the image using caffe io
+			inputs = img
 		
 		transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
 		transformer.set_transpose('data', (2,0,1))
 		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
-		show_results(img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age)
+		show_results(img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age, model_gender)
 
 		k = cv2.waitKey(1)
 		if k == 27:
@@ -209,7 +248,6 @@ def main(argv):
 
 	cap.release()
 	cv2.destroyAllWindows()
-
 
 if __name__=='__main__':
 	main(sys.argv[1:])
