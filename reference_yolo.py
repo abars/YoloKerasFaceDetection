@@ -9,6 +9,12 @@ import numpy as np
 import sys, getopt
 import cv2
 
+import plaidml.keras
+plaidml.keras.install_backend()
+
+from keras.models import load_model
+from keras.preprocessing import image
+
 def interpret_output(output, img_width, img_height):
 	classes = ["face"]
 	w_img = img_width
@@ -73,8 +79,7 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-
-def show_results(img,results, img_width, img_height, net_age, net_gender):
+def show_results(img,results, img_width, img_height, net_age, net_gender, model_age):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -136,7 +141,7 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
 
 		img = np.expand_dims(img, axis=0)
-		img = img - (104,117,123)#128
+		img = img - (104,117,123) #BGR mean value of VGG16
 
 		img = img.transpose((0, 3, 1, 2))
 
@@ -152,9 +157,20 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 		cls_gender = 1-pred_gender.argmax()
 		lines_gender=open('agegender_gender_words.txt').readlines()
 
+		IMAGE_SIZE_KERAS=224
+
+		img = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
+		img = img[::-1, :, ::-1].copy()	#BGR to RGB
+		img = np.expand_dims(img, axis=0)
+		img = img / 255.0
+		pred_age_keras = model_age.predict(img)[0]
+		prob_age_keras = np.max(pred_age_keras)
+		cls_age_keras = pred_age_keras.argmax()
+
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
-		cv2.putText(target_image, "%.2f" % prob_age +lines_age[cls_age], (x2,y2+h2+16), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-		cv2.putText(target_image, "%.2f" % prob_gender +lines_gender[cls_gender], (x2,y2+h2+32), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+		cv2.putText(target_image, "Caffe : %.2f" % prob_age +lines_age[cls_age], (x2,y2+h2+16), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+		cv2.putText(target_image, "Caffe : %.2f" % prob_gender +lines_gender[cls_gender], (x2,y2+h2+32), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+		cv2.putText(target_image, "Keras : %.2f" % prob_age_keras +lines_age[cls_age_keras], (x2,y2+h2+48), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 
 	cv2.imshow('YOLO detection',img_cp)
 	cv2.waitKey(1000)
@@ -167,14 +183,14 @@ def main(argv):
 	net_age  = caffe.Net('deploy_age.prototxt', 'age_net.caffemodel', caffe.TEST)
 	net_gender  = caffe.Net('deploy_gender.prototxt', 'gender_net.caffemodel', caffe.TEST)
 
+	MODEL_HDF5='train_age_vgg16.hdf5'
+	model_age = load_model(MODEL_HDF5)
+
 	while True:
 		cap = cv2.VideoCapture(0)
 		ret, frame = cap.read() #BGR
 		img=frame
 		img = img[...,::-1]  #BGR 2 RGB
-		#img = cv2.imread(path/to/image)
-		#img = img / 255.0
-		#img = img[:,:,(2,1,0)]
 		inputs = img.copy() / 255.0
 		
 		#img = caffe.io.load_image('myself.jpg') # load the image using caffe io
@@ -184,8 +200,8 @@ def main(argv):
 		transformer.set_transpose('data', (2,0,1))
 		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0]) # fc27 instead of fc12 for yolo_small 
-		show_results(img_cv,results, img.shape[1], img.shape[0], net_age, net_gender)
+		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
+		show_results(img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age)
 
 		k = cv2.waitKey(1)
 		if k == 27:
