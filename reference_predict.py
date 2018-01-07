@@ -37,7 +37,7 @@ img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
 
 data = np.array(img, dtype=np.float32)
 data.shape = (1,) + data.shape
-data -= 128
+data -= (104,117,123)
 
 # ----------------------------------------------
 # verify

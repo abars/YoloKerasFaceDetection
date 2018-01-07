@@ -81,6 +81,12 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 		y = int(results[i][2])
 		w = int(results[i][3])//2
 		h = int(results[i][4])//2
+
+		if(w<h):
+			w=h
+		else:
+			h=w
+
 		xmin = x-w
 		xmax = x+w
 		ymin = y-h
@@ -99,7 +105,7 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 		cv2.putText(img_cp,results[i][0] + ' : %.2f' % results[i][5],(xmin+5,ymin-7),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,0),1)	
 
 		target_image=img_cp
-		margin=0#w/4
+		margin=w/4
 
 		x=xmin
 		y=ymin
@@ -108,17 +114,17 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 
 		x2=x-margin
 		y2=y-margin
-		w2=w+margin
-		h2=h+margin
+		w2=w+margin*2
+		h2=h+margin*2
 
 		if(x2<0):
 			x2=0
 		if(y2<0):
 			y2=0
-		if(w2>=target_image.shape[0]):
-			w2=target_image.shape[0]-1
-		if(h2>=target_image.shape[1]):
-			h2=target_image.shape[1]-1
+		if(x2+w2>=target_image.shape[1]):
+			w2=target_image.shape[1]-1-x2
+		if(y2+h2>=target_image.shape[0]):
+			h2=target_image.shape[0]-1-y2
 
 		face_image = target_image[y2:y2+h2, x2:x2+w2]
 
@@ -130,7 +136,7 @@ def show_results(img,results, img_width, img_height, net_age, net_gender):
 		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
 
 		img = np.expand_dims(img, axis=0)
-		img = img - 128
+		img = img - (104,117,123)#128
 
 		img = img.transpose((0, 3, 1, 2))
 
@@ -170,6 +176,7 @@ def main(argv):
 		#img = img / 255.0
 		#img = img[:,:,(2,1,0)]
 		inputs = img.copy() / 255.0
+		
 		#img = caffe.io.load_image('myself.jpg') # load the image using caffe io
 		#inputs = img
 		
