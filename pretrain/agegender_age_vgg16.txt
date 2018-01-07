@@ -1,0 +1,259 @@
+makuo:yolo-keras-face-detection abars$ python agegender_train.py age
+INFO:plaidml:Opening device "amd_radeon_hd_-_firepro_d300_compute_engine.1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         (None, 224, 224, 3)       0         
+_________________________________________________________________
+block1_conv1 (Conv2D)        (None, 224, 224, 64)      1792      
+_________________________________________________________________
+block1_conv2 (Conv2D)        (None, 224, 224, 64)      36928     
+_________________________________________________________________
+block1_pool (MaxPooling2D)   (None, 112, 112, 64)      0         
+_________________________________________________________________
+block2_conv1 (Conv2D)        (None, 112, 112, 128)     73856     
+_________________________________________________________________
+block2_conv2 (Conv2D)        (None, 112, 112, 128)     147584    
+_________________________________________________________________
+block2_pool (MaxPooling2D)   (None, 56, 56, 128)       0         
+_________________________________________________________________
+block3_conv1 (Conv2D)        (None, 56, 56, 256)       295168    
+_________________________________________________________________
+block3_conv2 (Conv2D)        (None, 56, 56, 256)       590080    
+_________________________________________________________________
+block3_conv3 (Conv2D)        (None, 56, 56, 256)       590080    
+_________________________________________________________________
+block3_pool (MaxPooling2D)   (None, 28, 28, 256)       0         
+_________________________________________________________________
+block4_conv1 (Conv2D)        (None, 28, 28, 512)       1180160   
+_________________________________________________________________
+block4_conv2 (Conv2D)        (None, 28, 28, 512)       2359808   
+_________________________________________________________________
+block4_conv3 (Conv2D)        (None, 28, 28, 512)       2359808   
+_________________________________________________________________
+block4_pool (MaxPooling2D)   (None, 14, 14, 512)       0         
+_________________________________________________________________
+block5_conv1 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_conv2 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_conv3 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_pool (MaxPooling2D)   (None, 7, 7, 512)         0         
+_________________________________________________________________
+global_average_pooling2d_1 ( (None, 512)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1024)              525312    
+_________________________________________________________________
+dense_2 (Dense)              (None, 8)                 8200      
+=================================================================
+Total params: 15,248,200
+Trainable params: 7,612,936
+Non-trainable params: 7,635,264
+_________________________________________________________________
+Found 8617 images belonging to 8 classes.
+Found 2872 images belonging to 8 classes.
+Epoch 1/50
+INFO:plaidml:Analyzing Ops: 22 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 56 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 90 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 128 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 192 of 329 operations complete
+538/539 [============================>.] - ETA: 2s - loss: 74.9581 - acc: 0.3242INFO:plaidml:Analyzing Ops: 33 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 57 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 90 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 124 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 192 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 24 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 55 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 89 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 123 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 21 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 55 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 89 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 123 of 188 operations complete
+539/539 [==============================] - 1558s - loss: 74.8222 - acc: 0.3247 - val_loss: 1.8926 - val_acc: 0.3276
+Epoch 2/50
+539/539 [==============================] - 1511s - loss: 1.7426 - acc: 0.3696 - val_loss: 1.5191 - val_acc: 0.4384
+Epoch 3/50
+539/539 [==============================] - 1514s - loss: 1.5227 - acc: 0.4343 - val_loss: 1.4643 - val_acc: 0.4589
+Epoch 4/50
+539/539 [==============================] - 1534s - loss: 1.4586 - acc: 0.4531 - val_loss: 1.4107 - val_acc: 0.4742
+Epoch 5/50
+539/539 [==============================] - 1528s - loss: 1.3980 - acc: 0.4703 - val_loss: 1.3630 - val_acc: 0.4732
+Epoch 6/50
+365/539 [===================>..........] - ETA: 387s - loss: 1.3172 - acc: 0.5036Terminated: 15
+makuo:yolo-keras-face-detection abars$ python agegender_train.py age
+INFO:plaidml:Opening device "amd_radeon_hd_-_firepro_d300_compute_engine.1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         (None, 224, 224, 3)       0         
+_________________________________________________________________
+block1_conv1 (Conv2D)        (None, 224, 224, 64)      1792      
+_________________________________________________________________
+block1_conv2 (Conv2D)        (None, 224, 224, 64)      36928     
+_________________________________________________________________
+block1_pool (MaxPooling2D)   (None, 112, 112, 64)      0         
+_________________________________________________________________
+block2_conv1 (Conv2D)        (None, 112, 112, 128)     73856     
+_________________________________________________________________
+block2_conv2 (Conv2D)        (None, 112, 112, 128)     147584    
+_________________________________________________________________
+block2_pool (MaxPooling2D)   (None, 56, 56, 128)       0         
+_________________________________________________________________
+block3_conv1 (Conv2D)        (None, 56, 56, 256)       295168    
+_________________________________________________________________
+block3_conv2 (Conv2D)        (None, 56, 56, 256)       590080    
+_________________________________________________________________
+block3_conv3 (Conv2D)        (None, 56, 56, 256)       590080    
+_________________________________________________________________
+block3_pool (MaxPooling2D)   (None, 28, 28, 256)       0         
+_________________________________________________________________
+block4_conv1 (Conv2D)        (None, 28, 28, 512)       1180160   
+_________________________________________________________________
+block4_conv2 (Conv2D)        (None, 28, 28, 512)       2359808   
+_________________________________________________________________
+block4_conv3 (Conv2D)        (None, 28, 28, 512)       2359808   
+_________________________________________________________________
+block4_pool (MaxPooling2D)   (None, 14, 14, 512)       0         
+_________________________________________________________________
+block5_conv1 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_conv2 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_conv3 (Conv2D)        (None, 14, 14, 512)       2359808   
+_________________________________________________________________
+block5_pool (MaxPooling2D)   (None, 7, 7, 512)         0         
+_________________________________________________________________
+global_average_pooling2d_1 ( (None, 512)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1024)              525312    
+_________________________________________________________________
+dense_2 (Dense)              (None, 8)                 8200      
+=================================================================
+Total params: 15,248,200
+Trainable params: 7,612,936
+Non-trainable params: 7,635,264
+_________________________________________________________________
+Found 8617 images belonging to 8 classes.
+Found 2872 images belonging to 8 classes.
+Epoch 1/50
+INFO:plaidml:Analyzing Ops: 22 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 46 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 79 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 101 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 135 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 186 of 329 operations complete
+538/539 [============================>.] - ETA: 2s - loss: 104.7793 - acc: 0.3352INFO:plaidml:Analyzing Ops: 33 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 56 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 90 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 118 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 186 of 329 operations complete
+INFO:plaidml:Analyzing Ops: 32 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 66 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 89 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 116 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 32 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 55 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 89 of 188 operations complete
+INFO:plaidml:Analyzing Ops: 112 of 188 operations complete
+539/539 [==============================] - 1529s - loss: 104.5875 - acc: 0.3358 - val_loss: 1.7508 - val_acc: 0.3698
+Epoch 2/50
+539/539 [==============================] - 1524s - loss: 1.5846 - acc: 0.4170 - val_loss: 1.4356 - val_acc: 0.4624
+Epoch 3/50
+539/539 [==============================] - 1527s - loss: 1.4225 - acc: 0.4594 - val_loss: 1.4525 - val_acc: 0.4325
+Epoch 4/50
+539/539 [==============================] - 1494s - loss: 1.3173 - acc: 0.4908 - val_loss: 1.2810 - val_acc: 0.4861
+Epoch 5/50
+539/539 [==============================] - 1470s - loss: 1.2284 - acc: 0.5165 - val_loss: 1.2126 - val_acc: 0.5425
+Epoch 6/50
+539/539 [==============================] - 1494s - loss: 1.1581 - acc: 0.5468 - val_loss: 1.1920 - val_acc: 0.5460
+Epoch 7/50
+539/539 [==============================] - 1451s - loss: 1.1022 - acc: 0.5665 - val_loss: 1.0902 - val_acc: 0.5749
+Epoch 8/50
+539/539 [==============================] - 1458s - loss: 1.0474 - acc: 0.5921 - val_loss: 1.0803 - val_acc: 0.5944
+Epoch 9/50
+539/539 [==============================] - 1528s - loss: 1.0095 - acc: 0.6124 - val_loss: 1.2057 - val_acc: 0.5512
+Epoch 10/50
+539/539 [==============================] - 1482s - loss: 0.9741 - acc: 0.6190 - val_loss: 1.1530 - val_acc: 0.5623
+Epoch 11/50
+539/539 [==============================] - 1500s - loss: 0.9367 - acc: 0.6363 - val_loss: 1.0633 - val_acc: 0.5971
+Epoch 12/50
+539/539 [==============================] - 1498s - loss: 0.9005 - acc: 0.6551 - val_loss: 1.0665 - val_acc: 0.6170
+Epoch 13/50
+539/539 [==============================] - 1466s - loss: 0.8734 - acc: 0.6671 - val_loss: 0.9423 - val_acc: 0.6400
+Epoch 14/50
+539/539 [==============================] - 1499s - loss: 0.8357 - acc: 0.6752 - val_loss: 0.9723 - val_acc: 0.6393
+Epoch 15/50
+539/539 [==============================] - 1503s - loss: 0.8046 - acc: 0.6933 - val_loss: 1.0336 - val_acc: 0.6219
+Epoch 16/50
+539/539 [==============================] - 1463s - loss: 0.7698 - acc: 0.7056 - val_loss: 1.4258 - val_acc: 0.5139
+Epoch 17/50
+539/539 [==============================] - 1512s - loss: 0.7554 - acc: 0.7167 - val_loss: 0.9455 - val_acc: 0.6487
+Epoch 18/50
+539/539 [==============================] - 1502s - loss: 0.7216 - acc: 0.7256 - val_loss: 0.9538 - val_acc: 0.6640
+Epoch 19/50
+539/539 [==============================] - 1493s - loss: 0.6989 - acc: 0.7356 - val_loss: 0.9616 - val_acc: 0.6549
+Epoch 20/50
+539/539 [==============================] - 1516s - loss: 0.6755 - acc: 0.7443 - val_loss: 0.9672 - val_acc: 0.6581
+Epoch 21/50
+539/539 [==============================] - 1510s - loss: 0.6560 - acc: 0.7507 - val_loss: 0.8960 - val_acc: 0.6779
+Epoch 22/50
+539/539 [==============================] - 1474s - loss: 0.6124 - acc: 0.7691 - val_loss: 1.0197 - val_acc: 0.6563
+Epoch 23/50
+539/539 [==============================] - 1457s - loss: 0.6051 - acc: 0.7703 - val_loss: 0.9244 - val_acc: 0.6870
+Epoch 24/50
+539/539 [==============================] - 1453s - loss: 0.5731 - acc: 0.7837 - val_loss: 0.9462 - val_acc: 0.6734
+Epoch 25/50
+539/539 [==============================] - 1496s - loss: 0.5567 - acc: 0.7858 - val_loss: 1.0600 - val_acc: 0.6518
+Epoch 26/50
+539/539 [==============================] - 1500s - loss: 0.5374 - acc: 0.7983 - val_loss: 0.9678 - val_acc: 0.6786
+Epoch 27/50
+539/539 [==============================] - 1501s - loss: 0.5046 - acc: 0.8091 - val_loss: 1.0276 - val_acc: 0.6769
+Epoch 28/50
+539/539 [==============================] - 1498s - loss: 0.4872 - acc: 0.8141 - val_loss: 1.0669 - val_acc: 0.6515
+Epoch 29/50
+539/539 [==============================] - 1520s - loss: 0.4637 - acc: 0.8282 - val_loss: 0.9009 - val_acc: 0.7023
+Epoch 30/50
+539/539 [==============================] - 1485s - loss: 0.4544 - acc: 0.8293 - val_loss: 0.9512 - val_acc: 0.7068
+Epoch 31/50
+539/539 [==============================] - 1511s - loss: 0.4248 - acc: 0.8417 - val_loss: 0.9506 - val_acc: 0.6981
+Epoch 32/50
+539/539 [==============================] - 1525s - loss: 0.4196 - acc: 0.8439 - val_loss: 1.0428 - val_acc: 0.6901
+Epoch 33/50
+539/539 [==============================] - 1521s - loss: 0.4101 - acc: 0.8464 - val_loss: 1.0103 - val_acc: 0.7023
+Epoch 34/50
+539/539 [==============================] - 1514s - loss: 0.3819 - acc: 0.8568 - val_loss: 0.9863 - val_acc: 0.7117
+Epoch 35/50
+539/539 [==============================] - 1506s - loss: 0.3701 - acc: 0.8631 - val_loss: 1.1487 - val_acc: 0.6605
+Epoch 36/50
+539/539 [==============================] - 1524s - loss: 0.3617 - acc: 0.8653 - val_loss: 0.9942 - val_acc: 0.7180
+Epoch 37/50
+539/539 [==============================] - 1505s - loss: 0.3358 - acc: 0.8749 - val_loss: 1.1299 - val_acc: 0.6884
+Epoch 38/50
+539/539 [==============================] - 1525s - loss: 0.3248 - acc: 0.8809 - val_loss: 1.0242 - val_acc: 0.7221
+Epoch 39/50
+539/539 [==============================] - 1528s - loss: 0.3159 - acc: 0.8831 - val_loss: 1.0367 - val_acc: 0.7201
+Epoch 40/50
+539/539 [==============================] - 1515s - loss: 0.3010 - acc: 0.8879 - val_loss: 1.0736 - val_acc: 0.7079
+Epoch 41/50
+539/539 [==============================] - 1682s - loss: 0.2894 - acc: 0.8970 - val_loss: 1.0343 - val_acc: 0.7260
+Epoch 42/50
+539/539 [==============================] - 1521s - loss: 0.2732 - acc: 0.9002 - val_loss: 1.0895 - val_acc: 0.7162
+Epoch 43/50
+539/539 [==============================] - 1470s - loss: 0.2693 - acc: 0.9035 - val_loss: 0.9989 - val_acc: 0.7242
+Epoch 44/50
+539/539 [==============================] - 1456s - loss: 0.2509 - acc: 0.9093 - val_loss: 1.1026 - val_acc: 0.7120
+Epoch 45/50
+539/539 [==============================] - 1504s - loss: 0.2483 - acc: 0.9084 - val_loss: 1.5998 - val_acc: 0.6466
+Epoch 46/50
+539/539 [==============================] - 1528s - loss: 0.2370 - acc: 0.9169 - val_loss: 1.1093 - val_acc: 0.7308
+Epoch 47/50
+539/539 [==============================] - 1517s - loss: 0.2179 - acc: 0.9239 - val_loss: 1.1085 - val_acc: 0.7239
+Epoch 48/50
+539/539 [==============================] - 1528s - loss: 0.2239 - acc: 0.9196 - val_loss: 1.0883 - val_acc: 0.7176
+Epoch 49/50
+539/539 [==============================] - 1498s - loss: 0.2159 - acc: 0.9199 - val_loss: 1.0177 - val_acc: 0.7326
+Epoch 50/50
+539/539 [==============================] - 1519s - loss: 0.2062 - acc: 0.9297 - val_loss: 1.0847 - val_acc: 0.7187

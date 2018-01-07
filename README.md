@@ -32,6 +32,16 @@ MacOS X 10.12
 
 PlaidML
 
+## Pretrained Model
+
+age classification loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
+
+<http://www.abars.biz/keras/train_age_vgg16.hdf5>
+
+<http://www.abars.biz/keras/agegender_age_vgg16.prototxt>
+
+<http://www.abars.biz/keras/agegender_age_vgg16.caffemodel>
+
 # Face Detection
 
 ## Prepare

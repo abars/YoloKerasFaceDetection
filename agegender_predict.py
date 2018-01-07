@@ -58,9 +58,9 @@ if(MODELS=='vgg16'):
 keras_model = load_model(MODEL_HDF5)
 keras_model.summary()
 
-keras2caffe.convert(keras_model, 'agegender.prototxt', 'agegender.caffemodel')
+keras2caffe.convert(keras_model, 'agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
 
-net  = caffe.Net('agegender.prototxt', 'agegender.caffemodel', caffe.TEST)
+net  = caffe.Net('agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
 
 # ----------------------------------------------
 # data

@@ -62,7 +62,8 @@ model.summary()
 # Classifier
 # ----------------------------------------------
 
-classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+#classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 
 cap = cv2.VideoCapture(0)
 mirror = False
@@ -79,7 +80,7 @@ while True:
 	faces = classifier.detectMultiScale(gray_image)
 
 	for i, (x,y,w,h) in enumerate(faces):
-		margin=w/4
+		margin=0#w/4
 
 		x2=x-margin
 		y2=y-margin
@@ -116,6 +117,7 @@ while True:
 		cv2.putText(target_image, str(prob)+lines[cls], (x2,y2+h2+16), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 
 	cv2.imshow("agegender", target_image)
+	#cv2.imwrite("agegender_result.jpg", target_image)
 
 	k = cv2.waitKey(1)
 	if k == 27:

@@ -5,3 +5,5 @@ darknet/*
 detectiondata/*
 wider_face_split/*
 YAD2K-master/*
+FDDB-folds/*
+originalPics/*
