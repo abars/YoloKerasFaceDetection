@@ -82,7 +82,7 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-def show_results(img,results, img_width, img_height, net_age, net_gender, model_age, model_gender):
+def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, model_age, model_gender):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -152,6 +152,12 @@ def show_results(img,results, img_width, img_height, net_age, net_gender, model_
 		img_keras = np.expand_dims(img_keras, axis=0)
 		img_keras = img_keras / 255.0
 
+		caffe_final_layer="prob"
+		if(MODE=="converted"):
+			caffe_final_layer="dense_2"
+			img = img_keras.copy()
+			img = img.transpose((0, 3, 1, 2))
+
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
 
@@ -160,7 +166,7 @@ def show_results(img,results, img_width, img_height, net_age, net_gender, model_
 
 		if(net_age!=None):
 			out = net_age.forward_all(data = img)
-			pred_age = out['prob']
+			pred_age = out[caffe_final_layer]
 			prob_age = np.max(pred_age)
 			cls_age = pred_age.argmax()
 			cv2.putText(target_image, "Caffe : %.2f" % prob_age + " " + lines_age[cls_age], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
@@ -168,7 +174,7 @@ def show_results(img,results, img_width, img_height, net_age, net_gender, model_
 
 		if(net_gender!=None):
 			out = net_gender.forward_all(data = img)
-			pred_gender = out['prob']
+			pred_gender = out[caffe_final_layer]
 			prob_gender = np.max(pred_gender)
 			cls_gender = 1-pred_gender.argmax()
 			cv2.putText(target_image, "Caffe : %.2f" % prob_gender + " " + lines_gender[cls_gender], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
@@ -199,9 +205,9 @@ def main(argv):
 	if len(sys.argv) == 2:
 		MODE = sys.argv[1]
 	else:
-		print("usage: python reference_yolo.py [caffe/keras/caffekeras]")
+		print("usage: python reference_yolo.py [caffe/keras/caffekeras/converted]")
 		sys.exit(1)
-	if(MODE!="caffe" and MODE!="keras" and MODE!="caffekeras"):
+	if(MODE!="caffe" and MODE!="keras" and MODE!="caffekeras" and MODE!="converted"):
 		print("Unknown mode "+MODE)
 		sys.exit(1)
 
@@ -216,6 +222,10 @@ def main(argv):
 	else:
 		net_age=None
 		net_gender=None
+
+	if(MODE == "converted"):
+		net_age  = caffe.Net('agegender_age_vgg16.prototxt', 'agegender_age_vgg16.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net('agegender_gender_vgg16.prototxt', 'agegender_gender_vgg16.caffemodel', caffe.TEST)
 
 	if(MODE == "keras" or MODE == "caffekeras"):
 		model_age = load_model('train_age_vgg16.hdf5')
@@ -240,7 +250,7 @@ def main(argv):
 		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
-		show_results(img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age, model_gender)
+		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age, model_gender)
 
 		k = cv2.waitKey(1)
 		if k == 27:

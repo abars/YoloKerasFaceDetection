@@ -6,9 +6,9 @@ Implement Face and Hand Detection , and Age and Gender Classification. (Experime
 
 ## Functions
 
-Face Detection (Keras , Darknet)
+Face Detection (Keras , Darknet , Caffe)
 
-Hand Detection (Darknet)
+Hand Detection (Darknet , Caffe)
 
 Age Classification (Keras)
 
@@ -19,6 +19,8 @@ Gender Classification (Keras)
 Keras2
 
 Darknet
+
+Caffe
 
 Python 2.7
 
@@ -34,7 +36,9 @@ PlaidML
 
 ## Pretrained Model
 
-age classification loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
+### Age Classification
+
+loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
 
 <http://www.abars.biz/keras/train_age_vgg16.hdf5>
 
@@ -42,15 +46,29 @@ age classification loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.69
 
 <http://www.abars.biz/keras/agegender_age_vgg16.caffemodel>
 
+### Gender Classification
+
+<http://www.abars.biz/keras/train_gender_vgg16.hdf5>
+
+<http://www.abars.biz/keras/agegender_gender_vgg16.prototxt>
+
+<http://www.abars.biz/keras/agegender_gender_vgg16.caffemodel>
+
+### Face Detection
+
+from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
+
+<http://www.abars.biz/keras/face.prototxt>
+
+<http://www.abars.biz/keras/caffemodel>
+
 # Face Detection
 
-## Prepare
+## Create dataset
 
 Download wider face datase (wider_face_split and WIDER_train folder) and put in the same folder.
 
 http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/
-
-## Create dataset
 
 Create WIDER_train/annotations_keras folder for keras.
 
@@ -66,7 +84,7 @@ Download BasicYoloKeras and put in the same folder.
 
 https://github.com/experiencor/basic-yolo-keras
 
-Execute train.
+Here is a train.
 
 `cd basic-yolo-keras-master`
 
@@ -78,7 +96,7 @@ Download Darknet and put in the same folder.
 
 https://github.com/pjreddie/darknet
 
-Compile with modify src/yolo.c.
+Compile after modify src/yolo.c.
 
 `char *train_images = "../WIDER_train/annotations_darknet/train.txt";`
 
@@ -90,7 +108,7 @@ Compile with modify src/yolo.c.
 
 `else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
 
-Execute train.
+Here is a train.
 
 `cd darknet`
 
@@ -98,11 +116,11 @@ Execute train.
 
 ## Test using Darknet
 
-Execute test.
+Here is a test.
 
 `./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg`
 
-Execute demo.
+Here is a run.
 
 `./darknet yolo demo ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 1`
 
@@ -120,7 +138,7 @@ Convert to Caffe model.
 
 # Hand detection
 
-## Prepare
+## Create Dataset
 
 Download viva hand dataset (detectiondata folder) and put in the same folder.
 
@@ -144,7 +162,7 @@ Compile with modify src/yolo.c.
 
 `else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
 
-Execute train.
+Here is a train.
 
 `cd darknet`
 
@@ -152,17 +170,17 @@ Execute train.
 
 ## Test using Darknet
 
-Execute test.
+Here is a test.
 
 `./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
 
-Execute demo.
+Here is a run.
 
 `./darknet yolo demo ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 4`
 
 # Age and Gender classification
 
-## Prepare
+## Create Dataset
 
 Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset (agegender folder)  and put in the same folder.
 
@@ -204,3 +222,10 @@ Demo classifier task using keras and yolo.
 
 `python agegender_yolo.py keras`
 
+# Related Work
+
+<https://www.openu.ac.il/home/hassner/projects/cnn_agegender/>
+
+<https://github.com/dpressel/rude-carnie>
+
+<https://how-old.net/>
