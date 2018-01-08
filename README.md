@@ -60,7 +60,17 @@ from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
 
 <http://www.abars.biz/keras/face.prototxt>
 
-<http://www.abars.biz/keras/caffemodel>
+<http://www.abars.biz/keras/face.caffemodel>
+
+## Pretrained Model Demo
+
+Here is a run using hdf5
+
+`python agegender_yolo keras`
+
+Here is a run using caffemodel
+
+`python agegender_yolo converted`
 
 # Face Detection
 
