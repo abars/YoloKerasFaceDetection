@@ -26,6 +26,8 @@ Python 2.7
 
 Perl
 
+OpenCV
+
 ## Implement Environment
 
 Mac Pro 2013
@@ -82,7 +84,7 @@ Here is a run using reference model <https://gist.github.com/GilLevi/c9e99062283
 
 ## Create dataset
 
-Download wider face datase (wider_face_split and WIDER_train folder) and put in the same folder.
+Download wider face dataset (wider_face_split and WIDER_train folder) and put in the same folder.
 
 http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/
 

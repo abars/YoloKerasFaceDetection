@@ -62,8 +62,8 @@ model.summary()
 # Classifier
 # ----------------------------------------------
 
-#classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+#classifier = cv2.CascadeClassifier('opencv/haarcascade_frontalface_default.xml')
+classifier = cv2.CascadeClassifier('opencv/haarcascade_frontalface_alt.xml')
 
 cap = cv2.VideoCapture(0)
 mirror = False
