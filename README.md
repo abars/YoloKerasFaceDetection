@@ -64,13 +64,19 @@ from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
 
 ## Pretrained Model Demo
 
-Here is a run using hdf5
+Here is a run using hdf5.
 
-`python agegender_yolo keras`
+`python agegender_yolo.py keras`
 
-Here is a run using caffemodel
+Here is a run using caffemodel.
 
-`python agegender_yolo converted`
+`python agegender_yolo.py converted`
+
+## Reference Model Demo
+
+Here is a run using reference model <https://gist.github.com/GilLevi/c9e99062283c719c03de>.
+
+`python agegender_yolo.py caffe`
 
 # Face Detection
 
