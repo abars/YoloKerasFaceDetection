@@ -16,7 +16,7 @@ from keras.models import load_model
 from keras.preprocessing import image
 
 DEMO_IMG=""
-#DEMO_IMG="dancing.jpg"
+#DEMO_IMG="images/dress3.jpg"
 
 def interpret_output(output, img_width, img_height):
 	classes = ["face"]
@@ -153,10 +153,12 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 		img_keras = img_keras / 255.0
 
 		caffe_final_layer="prob"
+		gender_revert=True
 		if(MODE=="converted"):
 			caffe_final_layer="dense_2"
 			img = img_keras.copy()
 			img = img.transpose((0, 3, 1, 2))
+			gender_revert = False
 
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
@@ -176,7 +178,10 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 			out = net_gender.forward_all(data = img)
 			pred_gender = out[caffe_final_layer]
 			prob_gender = np.max(pred_gender)
-			cls_gender = 1-pred_gender.argmax()
+			if(gender_revert):
+				cls_gender = 1-pred_gender.argmax()
+			else:
+				cls_gender = pred_gender.argmax()
 			cv2.putText(target_image, "Caffe : %.2f" % prob_gender + " " + lines_gender[cls_gender], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
@@ -190,7 +195,7 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 		if(model_gender!=None):
 			pred_gender_keras = model_gender.predict(img_keras)[0]
 			prob_gender_keras = np.max(pred_gender_keras)
-			cls_gender_keras = 1-pred_gender_keras.argmax()
+			cls_gender_keras = pred_gender_keras.argmax()
 			cv2.putText(target_image, "Keras : %.2f" % prob_gender_keras + " " + lines_gender[cls_gender_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
@@ -229,7 +234,7 @@ def main(argv):
 
 	if(MODE == "keras" or MODE == "caffekeras"):
 		model_age = load_model('train_age_vgg16.hdf5')
-		model_gender = None
+		model_gender = load_model('train_gender_vgg16.hdf5')
 	else:
 		model_age = None
 		model_gender = None

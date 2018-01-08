@@ -50,6 +50,8 @@ loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
 
 ### Gender Classification
 
+loss: 0.0691 - acc: 0.9713 - val_loss: 0.2905 - val_acc: 0.9206
+
 <http://www.abars.biz/keras/train_gender_vgg16.hdf5>
 
 <http://www.abars.biz/keras/agegender_gender_vgg16.prototxt>
