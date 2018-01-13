@@ -66,6 +66,14 @@ from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
 
 <http://www.abars.biz/keras/face.caffemodel>
 
+### Hand Detection
+
+IOU : 0.8
+
+<http://www.abars.biz/keras/vivahand_tinyyolov1_19000.weights>
+
+<https://github.com/abars/YoloKerasFaceDetection/blob/master/vivahand_tinyyolov1.cfg>
+
 ## Pretrained Model Demo
 
 Here is a run using hdf5.
