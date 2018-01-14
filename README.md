@@ -90,6 +90,30 @@ Here is a run using reference model <https://gist.github.com/GilLevi/c9e99062283
 
 `python agegender_yolo.py caffe`
 
+# Install
+
+## Modify Darknet
+
+Download Darknet and put in the same folder.
+
+https://github.com/pjreddie/darknet
+
+Compile with <https://github.com/abars/YoloKerasFaceDetection/blob/master/darknet_custom/yolo.c> for custom classes and custom cfg.
+
+`void train_yolo(char *cfgfile, char *weightfile,const char *train_images,const char *backup_directory)`
+
+`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
+
+`int class = find_int_arg(argc, argv, "-class", 20);`
+
+`char *train_images = find_char_arg(argc, argv, "-train", 0);`
+
+`char *backup_directory = find_char_arg(argc, argv, "-backup", 0);`
+
+`else if(0==strcmp(argv[2], "train")) train_yolo(cfg, weights, train_images, backup_directory);`
+
+`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
+
 # Face Detection
 
 ## Create dataset
@@ -120,33 +144,17 @@ Here is a train.
 
 ## Train using Darknet
 
-Download Darknet and put in the same folder.
-
-https://github.com/pjreddie/darknet
-
-Compile after modify src/yolo.c.
-
-`char *train_images = "../WIDER_train/annotations_darknet/train.txt";`
-
-`char *backup_directory = "backup/";`
-
-`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
-
-`int class = find_int_arg(argc, argv, "-class", 20);`
-
-`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
-
 Here is a train.
 
 `cd darknet`
 
-`./darknet yolo train ../widerface_tinyyolov1.cfg`
+`./darknet yolo train ../widerface_tinyyolov1.cfg -train ../WIDER_train/annotations_darknet/train.txt -backup ./backup/ -class 1`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg`
+`./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg -class 1`
 
 Here is a run.
 
@@ -178,29 +186,17 @@ Create detectiondata/train/pos annotations for darknet.
 
 ## Train using Darknet
 
-Compile with modify src/yolo.c.
-
-`char *train_images = "../detectiondata/train/pos/train.txt";`
-
-`char *backup_directory = "backup/";`
-
-`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
-
-`int class = find_int_arg(argc, argv, "-class", 20);`
-
-`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
-
 Here is a train.
 
 `cd darknet`
 
-`./darknet yolo train ../vivahand_tinyyolov1.cfg`
+`./darknet yolo train ../vivahand_tinyyolov1.cfg -train ../detectiondata/train/pos/train.txt -backup ./backup/ -class 4`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png`
+`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png -class 4`
 
 Here is a run.
 
