@@ -56,14 +56,19 @@ while(my $line=<IN>){
     my $w;
     my $h;
     ($xmin,$ymin,$w,$h)=split(" ",$line);
-    my $x=$xmin+$w/2;
-    my $y=$ymin+$h/2;
-    my $category=0;
-    $x=1.0*$x/$imagew;
-    $y=1.0*$y/$imageh;
-    $w=1.0*$w/$imagew;
-    $h=1.0*$h/$imageh;
-    print OUT "$category $x $y $w $h\n";
+
+    if($w>0 and $h>0 and $xmin>=0 and $ymin>=0 and $xmin+$w<=$imagew and $ymin+$h<=$imageh){
+      my $x=$xmin+$w/2;
+      my $y=$ymin+$h/2;
+      my $category=0;
+      $x=1.0*$x/$imagew;
+      $y=1.0*$y/$imageh;
+      $w=1.0*$w/$imagew;
+      $h=1.0*$h/$imageh;
+      print OUT "$category $x $y $w $h\n";
+    }else{
+      print "Invalid position removed $xmin $ymin $w $h at $file_no\n";
+    }
   }
 }
 
