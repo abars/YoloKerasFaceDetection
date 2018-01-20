@@ -7,6 +7,8 @@ use Image::Size;
 use File::Copy;
 use File::Spec::Functions qw/catfile/;
 
+my $single_class=1;
+
 for(my $test=0;$test<1;$test=$test+1){ #set 1 because not exist test/posGt
   my $folder="train";
   if($test eq 1){
@@ -81,6 +83,10 @@ for(my $test=0;$test<1;$test=$test+1){ #set 1 because not exist test/posGt
               }
           }
         }
+      }
+
+      if($single_class eq 1){
+        $category=0;
       }
 
       print OUT "$category $x $y $w $h\n";
