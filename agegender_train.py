@@ -19,6 +19,7 @@ from keras.models import Sequential
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D,AveragePooling2D,Input
 from keras.applications.vgg16 import VGG16
+from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import ImageDataGenerator
 import keras.callbacks
 
@@ -32,7 +33,8 @@ ANNOTATIONS='agegender'
 #ANNOTATIONS='gender'
 #ANNOTATIONS='age'
 
-MODELS="vgg16"
+MODELS="inceptionv3"
+#MODELS="vgg16"
 #MODELS="small_cnn"
 #MODELS="simple_cnn"
 
@@ -59,7 +61,7 @@ NUM_VALIDATION = 2889
 BATCH_SIZE = 16
 
 PLOT_FILE='agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
-MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+MODEL_HDF5='agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 
 #Size
 if ANNOTATIONS=='agegender':
@@ -69,8 +71,26 @@ if ANNOTATIONS=='age':
 if ANNOTATIONS=='gender':
   N_CATEGORIES=2
 
-#VOC model
-if(MODELS=='vgg16'):
+#model
+if(MODELS=='inceptionv3'):
+   IMAGE_SIZE = 299
+   EPOCS = 50
+   input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
+   base_model = InceptionV3(weights='imagenet', include_top=False,input_tensor=input_tensor)
+
+   x = base_model.output
+   x = GlobalAveragePooling2D()(x)
+   x = Dense(512, activation='relu')(x)
+   predictions = Dense(N_CATEGORIES, activation='softmax')(x)
+
+   model = Model(inputs=base_model.input, outputs=predictions)
+
+   layer_num = len(model.layers)
+   for layer in model.layers[:279]:
+      layer.trainable = False
+   for layer in model.layers[279:]:
+      layer.trainable = True
+elif(MODELS=='vgg16'):
    IMAGE_SIZE = 224
    EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
@@ -158,8 +178,16 @@ model.summary()
 # Data
 # ----------------------------------------------
 
+#def preprocess_input(img):
+  #img = img[...,::-1]  #RGB2BGR
+  #img = img - (104,117,123) #BGR mean value of VGG16
+
+  #img = img - (123,117,104) #RGB mean value of VGG16
+  #return img
+
 train_datagen = ImageDataGenerator(
    rescale=1.0 / 255,
+   #preprocessing_function=preprocess_input,
    shear_range=0.2,
    zoom_range=0.2,
    horizontal_flip=True,
@@ -167,6 +195,7 @@ train_datagen = ImageDataGenerator(
 
 test_datagen = ImageDataGenerator(
    rescale=1.0 / 255,
+   #preprocessing_function=preprocess_input,
 )
 
 train_generator = train_datagen.flow_from_directory(
