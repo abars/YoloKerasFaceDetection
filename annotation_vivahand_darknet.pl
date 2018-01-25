@@ -15,12 +15,14 @@ for(my $test=0;$test<1;$test=$test+1){ #set 1 because not exist test/posGt
     $folder="test";
   }
 
+  my $dataset_path="dataset/vivahand/detectiondata/";
+
   my $file_no=0;
   my $line_no=0;
 
-  my $thumb_dir="./detectiondata/$folder/posGt";
+  my $thumb_dir="./$dataset_path"."$folder/posGt";
 
-  open(TRAIN,">detectiondata/$folder/pos/$folder.txt");
+  open(TRAIN,">$dataset_path"."$folder/pos/$folder.txt");
 
   opendir(THUMB, $thumb_dir) or die "usage: $0 thumb_dir\n";
   foreach my $dir (readdir(THUMB)) {
@@ -45,11 +47,11 @@ for(my $test=0;$test<1;$test=$test+1){ #set 1 because not exist test/posGt
     my $img_path=$file_path;
     $img_path =~ s/\.txt/\.png/g;
     #print $img_path."\n";
-    ($imagew, $imageh) = imgsize("./detectiondata/$folder/pos/$img_path");
+    ($imagew, $imageh) = imgsize("./$dataset_path"."$folder/pos/$img_path");
 
-    print TRAIN "../detectiondata/$folder/pos/$img_path\n";
+    print TRAIN "../$dataset_path"."$folder/pos/$img_path\n";
 
-    open(OUT,">./detectiondata/$folder/pos/$file_path");
+    open(OUT,">./$dataset_path"."$folder/pos/$file_path");
 
     while(my $line=<IN>){
       #print $line;

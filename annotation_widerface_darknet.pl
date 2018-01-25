@@ -6,18 +6,20 @@ use strict;
 use Image::Size;
 use File::Copy;
 
-mkdir "WIDER_train/annotations_darknet";
+my $dataset_path="dataset/widerface/";
+
+mkdir "$dataset_path"."WIDER_train/annotations_darknet";
 
 my $file_no=0;
 my $line_no=0;
 
-open(IN,"<wider_face_split/wider_face_train_bbx_gt.txt") or die ("wider face dataset not found");
+open(IN,"<$dataset_path"."wider_face_split/wider_face_train_bbx_gt.txt") or die ("wider face dataset not found");
 
 my $imagew;
 my $imageh;
 
-open(TRAIN,">WIDER_train/annotations_darknet/train.txt");
-open(TEST,">WIDER_train/annotations_darknet/test.txt");
+open(TRAIN,">$dataset_path"."WIDER_train/annotations_darknet/train.txt");
+open(TEST,">$dataset_path"."WIDER_train/annotations_darknet/test.txt");
 
 while(my $line=<IN>){
   #print $line;
@@ -34,16 +36,16 @@ while(my $line=<IN>){
 
     chomp $file_path;
 
-    ($imagew, $imageh) = imgsize("./WIDER_train/images/$file_path");
+    ($imagew, $imageh) = imgsize("./$dataset_path"."WIDER_train/images/$file_path");
 
     if($file_no%4 eq 0){
-      print TEST "../WIDER_train/annotations_darknet/$file_no.jpg\n";
+      print TEST "./$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";
     }else{
-      print TRAIN "../WIDER_train/annotations_darknet/$file_no.jpg\n";        
+      print TRAIN "./$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";        
     }
 
-    copy("./WIDER_train/images/$file_path","WIDER_train/annotations_darknet/$file_no.jpg");
-    open(OUT,">WIDER_train/annotations_darknet/$file_no".".txt");
+    copy("./$dataset_path"."WIDER_train/images/$file_path","$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg");
+    open(OUT,">$dataset_path"."WIDER_train/annotations_darknet/$file_no".".txt");
    next;
   }
   if($line_no eq 1){

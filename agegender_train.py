@@ -199,7 +199,7 @@ test_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATIONS+'/train',
+   'dataset/agegender/annotations/'+ANNOTATIONS+'/train',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -207,7 +207,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = test_datagen.flow_from_directory(
-   'agegender/annotations/'+ANNOTATIONS+'/validation',
+   'dataset/agegender/annotations/'+ANNOTATIONS+'/validation',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',

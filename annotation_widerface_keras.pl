@@ -4,12 +4,14 @@ use warnings;
 use strict;
 use Image::Size;
 
-mkdir "WIDER_train/annotations_keras";
+my $dataset_path="dataset/widerface/";
+
+mkdir "$dataset_path"."WIDER_train/annotations_keras";
 
 my $file_no=0;
 my $line_no=0;
 
-open(IN,"<wider_face_split/wider_face_train_bbx_gt.txt") or die ("wider face dataset not found");
+open(IN,"<$dataset_path"."wider_face_split/wider_face_train_bbx_gt.txt") or die ("wider face dataset not found");
 
 while(my $line=<IN>){
   #print $line;
@@ -31,9 +33,9 @@ EOF
 
     my $imagew;
     my $imageh;
-    ($imagew, $imageh) = imgsize("./WIDER_train/images/$file_path");
+    ($imagew, $imageh) = imgsize("./$dataset_path"."WIDER_train/images/$file_path");
 
-    open(OUT,">WIDER_train/annotations_keras/wider_face-$file_no".".xml");
+    open(OUT,">$dataset_path"."WIDER_train/annotations_keras/wider_face-$file_no".".xml");
     print OUT <<"EOF";
 <annotation verified="yes">
   <folder>images</folder>
