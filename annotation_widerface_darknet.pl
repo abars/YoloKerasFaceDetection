@@ -39,9 +39,9 @@ while(my $line=<IN>){
     ($imagew, $imageh) = imgsize("./$dataset_path"."WIDER_train/images/$file_path");
 
     if($file_no%4 eq 0){
-      print TEST "./$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";
+      print TEST "../$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";
     }else{
-      print TRAIN "./$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";        
+      print TRAIN "../$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg\n";        
     }
 
     copy("./$dataset_path"."WIDER_train/images/$file_path","$dataset_path"."WIDER_train/annotations_darknet/$file_no.jpg");
