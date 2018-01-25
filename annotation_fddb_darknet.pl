@@ -62,8 +62,13 @@ for(my $list=1;$list<=10;$list=$list+1){
 
         my $x=$center_x;
         my $y=$center_y;
-        my $w=abs(cos($angle)*$major_axis_radius);
-        my $h=abs(sin($angle)*$major_axis_radius);
+
+        #my $w=abs(cos($angle)*$major_axis_radius)*2;
+        #my $h=abs(cos($angle)*$minor_axis_radius)*2;
+
+        my $w=$minor_axis_radius*2;
+        my $h=$major_axis_radius*2;
+
         my $category=0;
         $x=1.0*$x/$imagew;
         $y=1.0*$y/$imageh;
