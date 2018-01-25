@@ -1,5 +1,9 @@
 agegender/*
 basic-yolo-keras-master/*
 darknet/*
-dataset/*
+dataset/agegender/*
+dataset/fddb/*
+dataset/hand_dataset/*
+dataset/vivahand/*
+dataset/widerface/*
 YAD2K-master/*
