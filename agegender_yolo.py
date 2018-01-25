@@ -163,8 +163,8 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
 
-		lines_age=open('agegender_age_words.txt').readlines()
-		lines_gender=open('agegender_gender_words.txt').readlines()
+		lines_age=open('words/agegender_age_words.txt').readlines()
+		lines_gender=open('words/agegender_gender_words.txt').readlines()
 
 		if(net_age!=None):
 			out = net_age.forward_all(data = img)

@@ -49,12 +49,12 @@ out = net_age.forward_all(data = data)
 pred = out['prob']
 prob = np.max(pred)
 cls = pred.argmax()
-lines=open('agegender_age_words.txt').readlines()
+lines=open('words/agegender_age_words.txt').readlines()
 print prob, cls, lines[cls]
 
 out = net_gender.forward_all(data = data)
 pred = out['prob']
 prob = np.max(pred)
 cls = 1-pred.argmax()
-lines=open('agegender_gender_words.txt').readlines()
+lines=open('words/agegender_gender_words.txt').readlines()
 print prob, cls, lines[cls]

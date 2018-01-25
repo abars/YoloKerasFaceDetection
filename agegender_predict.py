@@ -47,7 +47,7 @@ if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
 # ----------------------------------------------
 
 MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
-ANNOTATION_WORDS='agegender_'+ANNOTATIONS+'_words.txt'
+ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 
 IMAGE_SIZE = 32
 if(MODELS=='simple_cnn'):
