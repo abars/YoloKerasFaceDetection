@@ -155,7 +155,7 @@ Here is a train.
 
 `cd basic-yolo-keras-master`
 
-`python train.py -c ../widerface_keras.json`
+`python train.py -c ../cfg/widerface_keras.json`
 
 ## Train using Darknet
 
