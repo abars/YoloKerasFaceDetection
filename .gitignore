@@ -1,9 +1,5 @@
-WIDER_train/*
 agegender/*
 basic-yolo-keras-master/*
 darknet/*
-detectiondata/*
-wider_face_split/*
+dataset/*
 YAD2K-master/*
-FDDB-folds/*
-originalPics/*

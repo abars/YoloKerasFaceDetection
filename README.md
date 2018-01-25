@@ -38,6 +38,34 @@ PlaidML
 
 ## Pretrained Model
 
+### Age and Gender Classification
+
+<https://gist.github.com/GilLevi/c9e99062283c719c03de>
+
+Download gender_net.caffemodel and gender_net.prototxt and age_net.caffemodel and age_net.prototxt.
+
+Put in pretain folder.
+
+### Face Detection
+
+from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
+
+<http://www.abars.biz/keras/face.prototxt>
+
+<http://www.abars.biz/keras/face.caffemodel>
+
+Download face.prototxt and face.caffemodel.
+
+Put in pretain folder.
+
+## Reference Model Demo
+
+Here is a run using reference model .
+
+`python agegender_yolo.py caffe`
+
+## Experimentl Model
+
 ### Age Classification
 
 loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
@@ -58,14 +86,6 @@ loss: 0.0691 - acc: 0.9713 - val_loss: 0.2905 - val_acc: 0.9206
 
 <http://www.abars.biz/keras/agegender_gender_vgg16.caffemodel>
 
-### Face Detection
-
-from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
-
-<http://www.abars.biz/keras/face.prototxt>
-
-<http://www.abars.biz/keras/face.caffemodel>
-
 ### Hand Detection
 
 IOU : 0.8
@@ -74,7 +94,7 @@ IOU : 0.8
 
 <https://github.com/abars/YoloKerasFaceDetection/blob/master/vivahand_tinyyolov1.cfg>
 
-## Pretrained Model Demo
+### Experimental Model Demo
 
 Here is a run using hdf5.
 
@@ -84,11 +104,6 @@ Here is a run using caffemodel.
 
 `python agegender_yolo.py converted`
 
-## Reference Model Demo
-
-Here is a run using reference model <https://gist.github.com/GilLevi/c9e99062283c719c03de>.
-
-`python agegender_yolo.py caffe`
 
 # Install
 
@@ -148,17 +163,17 @@ Here is a train.
 
 `cd darknet`
 
-`./darknet yolo train ../widerface_tinyyolov1.cfg -train ../WIDER_train/annotations_darknet/train.txt -backup ./backup/ -class 1`
+`./darknet yolo train ../cfg/widerface_tinyyolov1.cfg -train ../WIDER_train/annotations_darknet/train.txt -backup ./backup/ -class 1`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet yolo test ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg -class 1`
+`./darknet yolo test ../cfg/widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../WIDER_train/annotations_darknet/1.jpg -class 1`
 
 Here is a run.
 
-`./darknet yolo demo ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 1`
+`./darknet yolo demo ../cfg/vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 1`
 
 ## Convert to CaffeModel
 
@@ -170,7 +185,7 @@ Convert to Caffe model.
 
 `cd pytorch-caffe-darknet-convert`
 
-`python darknet2caffe.py ../widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights widerface.prototxt widerface.caffemodel`
+`python darknet2caffe.py ../cfg/widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights widerface.prototxt widerface.caffemodel`
 
 # Hand detection
 
@@ -190,17 +205,17 @@ Here is a train.
 
 `cd darknet`
 
-`./darknet yolo train ../vivahand_tinyyolov1.cfg -train ../detectiondata/train/pos/train.txt -backup ./backup/ -class 4`
+`./darknet yolo train ../cfg/vivahand_tinyyolov1.cfg -train ../detectiondata/train/pos/train.txt -backup ./backup/ -class 4`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet yolo test ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png -class 4`
+`./darknet yolo test ../cfg/vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights ../detectiondata/train/pos/1_0000003_0_0_0_6.png -class 4`
 
 Here is a run.
 
-`./darknet yolo demo ../vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 4`
+`./darknet yolo demo ../cfg/vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 4`
 
 # Age and Gender classification
 

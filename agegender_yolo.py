@@ -216,25 +216,25 @@ def main(argv):
 		print("Unknown mode "+MODE)
 		sys.exit(1)
 
-	model_filename = 'face.prototxt'
-	weight_filename = 'face.caffemodel'
+	model_filename = './pretrain/face.prototxt'
+	weight_filename = './pretrain/face.caffemodel'
 
 	net = caffe.Net(model_filename, weight_filename, caffe.TEST)
 
 	if(MODE == "caffe" or MODE == "caffekeras"):
-		net_age  = caffe.Net('deploy_age.prototxt', 'age_net.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net('deploy_gender.prototxt', 'gender_net.caffemodel', caffe.TEST)
+		net_age  = caffe.Net('./pretrain/deploy_age.prototxt', './pretrain/age_net.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net('./pretrain/deploy_gender.prototxt', './pretrain/gender_net.caffemodel', caffe.TEST)
 	else:
 		net_age=None
 		net_gender=None
 
 	if(MODE == "converted"):
-		net_age  = caffe.Net('agegender_age_vgg16.prototxt', 'agegender_age_vgg16.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net('agegender_gender_vgg16.prototxt', 'agegender_gender_vgg16.caffemodel', caffe.TEST)
+		net_age  = caffe.Net('./pretrain/agegender_age_vgg16.prototxt', './pretrain/agegender_age_vgg16.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net('./pretrain/agegender_gender_vgg16.prototxt', './pretrain/agegender_gender_vgg16.caffemodel', caffe.TEST)
 
 	if(MODE == "keras" or MODE == "caffekeras"):
-		model_age = load_model('train_age_vgg16.hdf5')
-		model_gender = load_model('train_gender_vgg16.hdf5')
+		model_age = load_model('./pretrain/train_age_vgg16.hdf5')
+		model_gender = load_model('./pretrain/train_gender_vgg16.hdf5')
 	else:
 		model_age = None
 		model_gender = None
