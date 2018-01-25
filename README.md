@@ -133,6 +133,8 @@ Compile with <https://github.com/abars/YoloKerasFaceDetection/blob/master/darkne
 
 ## Create dataset
 
+### widerface
+
 Download wider face dataset (wider_face_split and WIDER_train folder) and put in the dataset/widerface folder.
 
 http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/
@@ -145,7 +147,19 @@ Create datase/widerface/WIDER_train/annotations_darknet folder for darknet.
 
 `perl annotation_widerface_darknet.pl`
 
+### fddb
+
+Download fddb dataset (FDDB-folds and originalPics folder) and put in the dataset/fddb folder.
+
+http://vis-www.cs.umass.edu/fddb/
+
+Create datase/fddb/FDDB-folds/annotations_darknet folder for darknet.
+
+`perl annotation_fddb_darknet.pl`
+
 ## Train using Keras
+
+### widerface
 
 Download BasicYoloKeras and put in the same folder.
 
@@ -159,21 +173,41 @@ Here is a train.
 
 ## Train using Darknet
 
+### widerface
+
 Here is a train.
 
 `cd darknet`
 
 `./darknet yolo train ../cfg/widerface_tinyyolov1.cfg -train ../dataset/widerface/WIDER_train/annotations_darknet/train.txt -backup ./backup/ -class 1`
 
+### fddb
+
+`cd darknet`
+
+`./darknet yolo train ../cfg/fddb_yolosmallv1.cfg -train ../dataset/fddb/FDDB-folds/annotations_darknet/train.txt -backup ./backup/ -class 1`
+
 ## Test using Darknet
+
+### widerface
 
 Here is a test.
 
-`./darknet yolo test ../cfg/widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_200.weights ../dataset/widerface/WIDER_train/annotations_darknet/1.jpg -class 1`
+`./darknet yolo test ../cfg/widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_4000.weights ../dataset/widerface/WIDER_train/annotations_darknet/1.jpg -class 1`
 
 Here is a run.
 
-`./darknet yolo demo ../cfg/vivahand_tinyyolov1.cfg ./backup/vivahand_tinyyolov1_4000.weights -class 1`
+`./darknet yolo demo ../cfg/widerface_tinyyolov1.cfg ./backup/widerface_tinyyolov1_4000.weights -class 1`
+
+### fddb
+
+Here is a test.
+
+`./darknet yolo test ../cfg/fddb_yolosmallv1.cfg ./backup/fddb_yolosmallv1_4000.weights ../dataset/fddb/originalPics/2002/07/19/big/img_18 -class 1`
+
+Here is a run.
+
+`./darknet yolo demo ../cfg/fddb_yolosmallv1.cfg ./backup/fddb_yolosmallv1_4000.weights -class 1`
 
 ## Convert to CaffeModel
 
