@@ -4,10 +4,12 @@
 
 import os.path,sys
 
+#os.environ['KERAS_BACKEND'] = 'tensorflow'
+
 import plaidml.keras
 plaidml.keras.install_backend()
 
-from keras.layers.convolutional import Convolution2D
+from keras.layers.convolutional import Convolution2D, Conv2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Activation
 from keras.layers.core import Dense
@@ -18,9 +20,13 @@ from keras.layers import InputLayer
 from keras.models import Sequential
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D,AveragePooling2D,Input
+from keras.layers import SeparableConv2D
 from keras.applications.vgg16 import VGG16
 from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import ImageDataGenerator
+from keras.regularizers import l2
+from keras import layers
+
 import keras.callbacks
 
 import matplotlib.pyplot as plt
@@ -34,9 +40,10 @@ ANNOTATIONS='agegender'
 #ANNOTATIONS='age'
 
 #MODELS="inceptionv3"
-MODELS="vgg16"
+#MODELS="vgg16"
 #MODELS="small_cnn"
 #MODELS="simple_cnn"
+MODELS="mini_XCEPTION"
 
 # ----------------------------------------------
 # Argument
@@ -102,7 +109,7 @@ elif(MODELS=='vgg16'):
    model = Model(inputs=base_model.input, outputs=predictions)
    for layer in base_model.layers[:15]:
       layer.trainable = False
-elif(MODEL_HDF5=='small_cnn'):
+elif(MODELS=='small_cnn'):
    IMAGE_SIZE = 32
    EPOCS = 50
    model = Sequential()
@@ -119,7 +126,7 @@ elif(MODEL_HDF5=='small_cnn'):
    model.add(Dropout(0.5))
    model.add(Dense(N_CATEGORIES))
    model.add(Activation('softmax',name='predictions'))
-elif(MODEL_HDF5=='simple_cnn'):
+elif(MODELS=='simple_cnn'):
    IMAGE_SIZE = 64
    EPOCS = 50
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
@@ -163,16 +170,115 @@ elif(MODEL_HDF5=='simple_cnn'):
    model.add(Convolution2D(filters=N_CATEGORIES, kernel_size=(3, 3), padding='same'))
    model.add(GlobalAveragePooling2D())
    model.add(Activation('softmax',name='predictions'))
+elif(MODELS=='mini_XCEPTION'):
+    IMAGE_SIZE = 64
+    EPOCS = 50
+    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
+
+    l2_regularization=0.01
+    regularization = l2(l2_regularization)
+
+    # base
+    img_input = Input(input_shape)
+    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization,
+                                            use_bias=False)(img_input)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization,
+                                            use_bias=False)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
+    # module 1
+    residual = Conv2D(16, (1, 1), strides=(2, 2),
+                      padding='same', use_bias=False)(x)
+    residual = BatchNormalization()(residual)
+
+    x = SeparableConv2D(16, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = SeparableConv2D(16, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+
+    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.add([x, residual])
+
+    # module 2
+    residual = Conv2D(32, (1, 1), strides=(2, 2),
+                      padding='same', use_bias=False)(x)
+    residual = BatchNormalization()(residual)
+
+    x = SeparableConv2D(32, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = SeparableConv2D(32, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+
+    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.add([x, residual])
+
+    # module 3
+    residual = Conv2D(64, (1, 1), strides=(2, 2),
+                      padding='same', use_bias=False)(x)
+    residual = BatchNormalization()(residual)
+
+    x = SeparableConv2D(64, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = SeparableConv2D(64, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+
+    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.add([x, residual])
+
+    # module 4
+    residual = Conv2D(128, (1, 1), strides=(2, 2),
+                      padding='same', use_bias=False)(x)
+    residual = BatchNormalization()(residual)
+
+    x = SeparableConv2D(128, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    x = SeparableConv2D(128, (3, 3), padding='same',
+                        kernel_regularizer=regularization,
+                        use_bias=False)(x)
+    x = BatchNormalization()(x)
+
+    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.add([x, residual])
+
+    x = Conv2D(N_CATEGORIES, (3, 3),
+            #kernel_regularizer=regularization,
+            padding='same')(x)
+    x = GlobalAveragePooling2D()(x)
+    output = Activation('softmax',name='predictions')(x)
+
+    model = Model(img_input, output)
 else:
    raise Exception('invalid model name')
 
-#for fine tuning
-from keras.optimizers import SGD
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
-
-#for full training
-#from keras.optimizers import Adagrad
-#model.compile(optimizer=Adagrad(lr=0.01, epsilon=1e-08, decay=0.0), loss='categorical_crossentropy',metrics=['accuracy'])
+if(MODELS=='vgg16'):
+  #for fine tuning
+  from keras.optimizers import SGD
+  model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
+else:
+  #for full training
+  from keras.optimizers import Adagrad
+  model.compile(optimizer=Adagrad(lr=0.01, epsilon=1e-08, decay=0.0), loss='categorical_crossentropy',metrics=['accuracy'])
 
 model.summary()
 
