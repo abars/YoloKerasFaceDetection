@@ -16,9 +16,6 @@ plaidml.keras.install_backend()
 from keras.models import load_model
 from keras.preprocessing import image
 
-DEMO_IMG=""
-#DEMO_IMG="images/dress3.jpg"
-
 def interpret_output(output, img_width, img_height):
 	classes = ["face"]
 	w_img = img_width
@@ -83,7 +80,7 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, net_emotion, model_age, model_gender):
+def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, net_emotion, mean_age_gender, mean_emotion, model_age, model_gender):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -145,13 +142,21 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 
 		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
 		img = np.expand_dims(img, axis=0)
-		img = img - (104,117,123) #BGR mean value of VGG16
-		img = img.transpose((0, 3, 1, 2))
+		if(mean_age_gender != None):
+			img = img.transpose((0, 3, 1, 2))
+			img = img - mean_age_gender
+		else:
+			img = img - (104,117,123) #BGR mean value of VGG16
+			img = img.transpose((0, 3, 1, 2))
 
 		img_emotion = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
 		img_emotion = np.expand_dims(img_emotion, axis=0)
-		img_emotion = img_emotion - (104,117,123) #BGR mean value of VGG16
-		img_emotion = img_emotion.transpose((0, 3, 1, 2))
+		if(mean_emotion != None):
+			img_emotion = img_emotion.transpose((0, 3, 1, 2))
+			img_emotion = img_emotion - mean_emotion
+		else:
+			img_emotion = img_emotion - (104,117,123) #BGR mean value of VGG16
+			img_emotion = img_emotion.transpose((0, 3, 1, 2))
 
 		img_keras = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
 		img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
@@ -216,12 +221,29 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 
 	cv2.imshow('YOLO detection',img_cp)
 	
-	if(DEMO_IMG!=""):
-		cv2.imwrite("detection.jpg", img_cp)
-		cv2.waitKey(1000)
+	#if(DEMO_IMG!=""):
+	#	cv2.imwrite("detection.jpg", img_cp)
+	#	cv2.waitKey(1000)
+
+def get_mean(binary_proto,width,height):
+	mean_filename=binary_proto
+	proto_data = open(mean_filename, "rb").read()
+	a = caffe.io.caffe_pb2.BlobProto.FromString(proto_data)
+	mean  = caffe.io.blobproto_to_array(a)[0]
+	print "mean value of "+binary_proto+" is "+str(mean)+" shape "+str(mean.shape)
+
+	shape=(mean.shape[0],height,width);
+	mean=mean.copy()
+	mean.resize(shape)
+
+	print "resized mean value is "+str(mean)
+
+	return mean
 
 def main(argv):
 	MODE="caffe"
+	DEMO_IMG=""
+
 	if len(sys.argv) >= 2:
 		MODE = sys.argv[1]
 		if(len(sys.argv)>=3):
@@ -245,10 +267,25 @@ def main(argv):
 			net_emotion = caffe.Net('./pretrain/EmotiW_VGG_S.prototxt', './pretrain/EmotiW_VGG_S.caffemodel', caffe.TEST)
 		else:
 			net_emotion = None
+
+		mean_age_gender=None
+		mean_emotion=None
+	
+		#if(os.path.exists('./pretrain/age_gender_net.binaryproto')):
+		#	mean_age_gender=get_mean('./pretrain/age_gender_net.binaryproto',227,227)
+		#else:
+		#	mean_age_gender=()
+	
+		#if(os.path.exists('./pretrain/EmotiW_VGG_S.binaryproto')):
+		#	mean_emotion=get_mean('./pretrain/EmotiW_VGG_S.binaryproto',224,224)
+		#else:
+		#	mean_emotion=()
 	else:
 		net_age=None
 		net_gender=None
 		net_emotion=None
+		mean_age_gender=None
+		mean_emotion=None
 
 	if(MODE == "converted"):
 		net_age  = caffe.Net('./pretrain/agegender_age_vgg16.prototxt', './pretrain/agegender_age_vgg16.caffemodel', caffe.TEST)
@@ -277,7 +314,7 @@ def main(argv):
 		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
-		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, net_emotion, model_age, model_gender)
+		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, net_emotion, mean_age_gender, mean_emotion, model_age, model_gender)
 
 		k = cv2.waitKey(1)
 		if k == 27:
