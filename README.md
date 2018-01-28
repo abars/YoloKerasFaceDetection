@@ -1,6 +1,6 @@
 # Yolo Keras Face Detection
 
-Implement Face and Hand Detection , and Age and Gender Classification. (Experimental)
+Implement Face and Emotion detection , and Age and Gender Classification. (Experimental)
 
 ![Detected](https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg "Detected")
 
@@ -316,6 +316,10 @@ Demo classifier task using keras and yolo.
 Download FER2013 dataset.
 
 https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
+
+## Train
+
+Implementing.
 
 # Related Work
 
