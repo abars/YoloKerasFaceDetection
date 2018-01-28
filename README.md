@@ -2,7 +2,7 @@
 
 Implement Face and Hand Detection , and Age and Gender Classification. (Experimental)
 
-![Detected](https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.png "Detected")
+![Detected](https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg "Detected")
 
 (image from wider face dataset)
 
