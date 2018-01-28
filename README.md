@@ -47,7 +47,7 @@ PlaidML
 
 <https://gist.github.com/GilLevi/c9e99062283c719c03de>
 
-Download gender_net.caffemodel and gender_net.prototxt and age_net.caffemodel and age_net.prototxt.
+Download gender_net.caffemodel, gender_net.prototxt, age_net.caffemodel and age_net.prototxt.
 
 Put in pretain folder.
 
@@ -71,7 +71,7 @@ Converted from <https://github.com/oarriaga/face_classification>
 
 <http://www.abars.biz/keras/emotion_miniXception.caffemodel>
 
-Download emotion_miniXception.prototxt andemotion_miniXception.caffemodel.
+Download emotion_miniXception.prototxt and emotion_miniXception.caffemodel.
 
 Put in pretain folder.
 
