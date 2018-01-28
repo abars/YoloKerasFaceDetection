@@ -23,8 +23,8 @@ import keras2caffe
 # MODE
 # ----------------------------------------------
 
-ANNOTATIONS='agegender'
-#ANNOTATIONS='gender'
+#ANNOTATIONS='agegender'
+ANNOTATIONS='gender'
 #ANNOTATION='age'
 #ANNOTATION='emotion'
 
@@ -43,7 +43,7 @@ else:
   print("usage: python agegender_predict.py [agegender/gender/age]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="emotion":
   print("unknown annotation mode");
   sys.exit(1)
 
@@ -51,12 +51,12 @@ if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
 # converting
 # ----------------------------------------------
 
-MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+MODEL_HDF5='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 
-if(MODELS=="miniXception"):
+if(ANNOTATIONS=="emotion"):
 	MODEL_HDF5='pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5'
-	ANNOTATION_WORDS='words/fer2013_words.txt'
+	ANNOTATION_WORDS='words/emotion_words.txt'
 
 IMAGE_SIZE = 32
 if(MODELS=='simple_cnn' or MODELS=='miniXception'):
@@ -77,7 +77,7 @@ net  = caffe.Net('agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+A
 
 img = cv2.imread('dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
 img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-if(MODELS=='miniXception'):
+if(ANNOTATIONS=='emotion'):
 	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 	img = np.expand_dims(img, axis=2)
 else:
@@ -86,7 +86,7 @@ else:
 data = np.array(img, dtype=np.float32)
 data.shape = (1,) + data.shape
 data /= 255
-if(MODELS=='miniXception'):
+if(ANNOTATIONS=='emotion'):
 	data = data*2 - 1
 
 # ----------------------------------------------
@@ -103,7 +103,7 @@ data = data.transpose((0, 3, 1, 2))
 
 out = net.forward_all(data = data)
 
-if(MODELS=="miniXception"):
+if(ANNOTATIONS=="emotion"):
 	pred = out['global_average_pooling2d_1']
 else:
 	if(MODELS=='vgg16'):

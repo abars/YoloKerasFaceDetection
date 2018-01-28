@@ -4,10 +4,10 @@
 
 import os.path,sys
 
-#os.environ['KERAS_BACKEND'] = 'tensorflow'
+os.environ['KERAS_BACKEND'] = 'tensorflow'
 
-import plaidml.keras
-plaidml.keras.install_backend()
+#import plaidml.keras
+#plaidml.keras.install_backend()
 
 from keras.layers.convolutional import Convolution2D, Conv2D
 from keras.layers.convolutional import MaxPooling2D
@@ -35,15 +35,15 @@ import matplotlib.pyplot as plt
 # MODE
 # ----------------------------------------------
 
-ANNOTATIONS='agegender'
-#ANNOTATIONS='gender'
+#ANNOTATIONS='agegender'
+ANNOTATIONS='gender'
 #ANNOTATIONS='age'
 
 #MODELS="inceptionv3"
 #MODELS="vgg16"
 #MODELS="small_cnn"
 #MODELS="simple_cnn"
-MODELS="mini_XCEPTION"
+MODELS="miniXception"
 
 # ----------------------------------------------
 # Argument
@@ -67,8 +67,8 @@ NUM_TRAINING = 8634
 NUM_VALIDATION = 2889
 BATCH_SIZE = 16
 
-PLOT_FILE='agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
-MODEL_HDF5='agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+PLOT_FILE='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
+MODEL_HDF5='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 
 #Size
 if ANNOTATIONS=='agegender':
@@ -170,7 +170,7 @@ elif(MODELS=='simple_cnn'):
    model.add(Convolution2D(filters=N_CATEGORIES, kernel_size=(3, 3), padding='same'))
    model.add(GlobalAveragePooling2D())
    model.add(Activation('softmax',name='predictions'))
-elif(MODELS=='mini_XCEPTION'):
+elif(MODELS=='miniXception'):
     IMAGE_SIZE = 64
     EPOCS = 50
     input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
