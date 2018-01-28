@@ -236,9 +236,9 @@ IOU : 0.8
 
 Here is a run using hdf5.
 
-`python agegender_yolo.py keras`
+`python agegender_demo.py keras`
 
 Here is a run using caffemodel.
 
-`python agegender_yolo.py converted`
+`python agegender_demo.py converted`
 

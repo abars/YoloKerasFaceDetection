@@ -249,7 +249,7 @@ def main(argv):
 		if(len(sys.argv)>=3):
 			DEMO_IMG=sys.argv[2]
 	else:
-		print("usage: python reference_yolo.py [caffe/keras/caffekeras/converted]")
+		print("usage: python agegender_demo.py [caffe/keras/caffekeras/converted]")
 		sys.exit(1)
 	if(MODE!="caffe" and MODE!="keras" and MODE!="caffekeras" and MODE!="converted"):
 		print("Unknown mode "+MODE)

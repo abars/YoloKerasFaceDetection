@@ -75,7 +75,7 @@ Put in pretain folder.
 
 Here is a run using reference model .
 
-`python agegender_yolo.py caffe`
+`python agegender_demo.py caffe`
 
 # How to train
 
