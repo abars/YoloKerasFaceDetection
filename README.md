@@ -53,7 +53,7 @@ Put in pretain folder.
 
 ### Face Detection
 
-from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
+Converted from <https://github.com/dannyblueliu/YOLO-version-2-Face-detection>
 
 <http://www.abars.biz/keras/face.prototxt>
 
@@ -65,9 +65,13 @@ Put in pretain folder.
 
 ### Emotion Detection
 
-<https://gist.github.com/GilLevi/54aee1b8b0397721aa4b>
+Converted from <https://github.com/oarriaga/face_classification>
 
-Download EmotiW_VGG_S.caffemodel and EmotiW_VGG_S.caffemodel.prototxt (rename from deploy.prototxt).
+<http://www.abars.biz/keras/emotion_miniXception.prototxt>
+
+<http://www.abars.biz/keras/emotion_miniXception.caffemodel>
+
+Download emotion_miniXception.prototxt andemotion_miniXception.caffemodel.
 
 Put in pretain folder.
 
@@ -84,6 +88,10 @@ Here is a training tutorial. (Experimental)
 https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN.md
 
 # Related Work
+
+<https://github.com/oarriaga/face_classification>
+
+<https://gist.github.com/GilLevi/54aee1b8b0397721aa4b>
 
 <https://www.openu.ac.il/home/hassner/projects/cnn_agegender/>
 

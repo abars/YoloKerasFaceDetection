@@ -6,9 +6,12 @@ import caffe
 import cv2
 import sys
 import numpy as np
+import os
 
-import plaidml.keras
-plaidml.keras.install_backend()
+os.environ['KERAS_BACKEND'] = 'tensorflow'
+
+#import plaidml.keras
+#plaidml.keras.install_backend()
 
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing import image
@@ -23,10 +26,12 @@ import keras2caffe
 ANNOTATIONS='agegender'
 #ANNOTATIONS='gender'
 #ANNOTATION='age'
+#ANNOTATION='emotion'
 
-MODELS="vgg16"
+#MODELS="vgg16"
 #MODELS="small_cnn"
 #MODELS="simple_cnn"
+MODELS="miniXception"
 
 # ----------------------------------------------
 # Argument
@@ -49,8 +54,12 @@ if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
 MODEL_HDF5='train_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 
+if(MODELS=="miniXception"):
+	MODEL_HDF5='pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5'
+	ANNOTATION_WORDS='words/fer2013_words.txt'
+
 IMAGE_SIZE = 32
-if(MODELS=='simple_cnn'):
+if(MODELS=='simple_cnn' or MODELS=='miniXception'):
 	IMAGE_SIZE = 64
 if(MODELS=='vgg16'):
 	IMAGE_SIZE = 224
@@ -66,13 +75,19 @@ net  = caffe.Net('agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+A
 # data
 # ----------------------------------------------
 
-img = cv2.imread('agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
+img = cv2.imread('dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
 img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-img = img[...,::-1]  #BGR 2 RGB
+if(MODELS=='miniXception'):
+	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	img = np.expand_dims(img, axis=2)
+else:
+	img = img[...,::-1]  #BGR 2 RGB
 
 data = np.array(img, dtype=np.float32)
 data.shape = (1,) + data.shape
 data /= 255
+if(MODELS=='miniXception'):
+	data = data*2 - 1
 
 # ----------------------------------------------
 # verify
@@ -87,10 +102,15 @@ print prob, cls, lines[cls]
 data = data.transpose((0, 3, 1, 2))
 
 out = net.forward_all(data = data)
-if(MODELS=='vgg16'):
-	pred = out['dense_2']
+
+if(MODELS=="miniXception"):
+	pred = out['global_average_pooling2d_1']
 else:
-	pred = out['predictions']
+	if(MODELS=='vgg16'):
+		pred = out['dense_2']
+	else:
+		pred = out['predictions']
+
 prob = np.max(pred)
 cls = pred.argmax()
 lines=open(ANNOTATION_WORDS).readlines()

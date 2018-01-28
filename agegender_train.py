@@ -33,8 +33,8 @@ ANNOTATIONS='agegender'
 #ANNOTATIONS='gender'
 #ANNOTATIONS='age'
 
-MODELS="inceptionv3"
-#MODELS="vgg16"
+#MODELS="inceptionv3"
+MODELS="vgg16"
 #MODELS="small_cnn"
 #MODELS="simple_cnn"
 
@@ -166,11 +166,13 @@ elif(MODEL_HDF5=='simple_cnn'):
 else:
    raise Exception('invalid model name')
 
-#from keras.optimizers import SGD
-  #model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
+#for fine tuning
+from keras.optimizers import SGD
+model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
 
-from keras.optimizers import Adagrad
-model.compile(optimizer=Adagrad(lr=0.01, epsilon=1e-08, decay=0.0), loss='categorical_crossentropy',metrics=['accuracy'])
+#for full training
+#from keras.optimizers import Adagrad
+#model.compile(optimizer=Adagrad(lr=0.01, epsilon=1e-08, decay=0.0), loss='categorical_crossentropy',metrics=['accuracy'])
 
 model.summary()
 
