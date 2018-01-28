@@ -8,6 +8,7 @@ from datetime import datetime
 import numpy as np
 import sys, getopt
 import cv2
+import os
 
 import plaidml.keras
 plaidml.keras.install_backend()
@@ -82,7 +83,7 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, model_age, model_gender):
+def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, net_emotion, model_age, model_gender):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -147,6 +148,11 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 		img = img - (104,117,123) #BGR mean value of VGG16
 		img = img.transpose((0, 3, 1, 2))
 
+		img_emotion = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
+		img_emotion = np.expand_dims(img_emotion, axis=0)
+		img_emotion = img_emotion - (104,117,123) #BGR mean value of VGG16
+		img_emotion = img_emotion.transpose((0, 3, 1, 2))
+
 		img_keras = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
 		img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
 		img_keras = np.expand_dims(img_keras, axis=0)
@@ -165,6 +171,7 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 
 		lines_age=open('words/agegender_age_words.txt').readlines()
 		lines_gender=open('words/agegender_gender_words.txt').readlines()
+		lines_emotion=open('words/emotion_words.txt').readlines()
 
 		if(net_age!=None):
 			out = net_age.forward_all(data = img)
@@ -183,6 +190,14 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 			else:
 				cls_gender = pred_gender.argmax()
 			cv2.putText(target_image, "Caffe : %.2f" % prob_gender + " " + lines_gender[cls_gender], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			offset=offset+16
+
+		if(net_emotion!=None):
+			out = net_emotion.forward_all(data = img_emotion)
+			pred_emotion = out[caffe_final_layer]
+			prob_emotion = np.max(pred_emotion)
+			cls_emotion = pred_emotion.argmax()
+			cv2.putText(target_image, "Caffe : %.2f" % prob_emotion + " " + lines_emotion[cls_emotion], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
 		if(model_age!=None):
@@ -207,8 +222,10 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, m
 
 def main(argv):
 	MODE="caffe"
-	if len(sys.argv) == 2:
+	if len(sys.argv) >= 2:
 		MODE = sys.argv[1]
+		if(len(sys.argv)>=3):
+			DEMO_IMG=sys.argv[2]
 	else:
 		print("usage: python reference_yolo.py [caffe/keras/caffekeras/converted]")
 		sys.exit(1)
@@ -224,9 +241,14 @@ def main(argv):
 	if(MODE == "caffe" or MODE == "caffekeras"):
 		net_age  = caffe.Net('./pretrain/deploy_age.prototxt', './pretrain/age_net.caffemodel', caffe.TEST)
 		net_gender  = caffe.Net('./pretrain/deploy_gender.prototxt', './pretrain/gender_net.caffemodel', caffe.TEST)
+		if(os.path.exists('./pretrain/EmotiW_VGG_S.prototxt')):
+			net_emotion = caffe.Net('./pretrain/EmotiW_VGG_S.prototxt', './pretrain/EmotiW_VGG_S.caffemodel', caffe.TEST)
+		else:
+			net_emotion = None
 	else:
 		net_age=None
 		net_gender=None
+		net_emotion=None
 
 	if(MODE == "converted"):
 		net_age  = caffe.Net('./pretrain/agegender_age_vgg16.prototxt', './pretrain/agegender_age_vgg16.caffemodel', caffe.TEST)
@@ -255,7 +277,7 @@ def main(argv):
 		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
-		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, model_age, model_gender)
+		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, net_emotion, model_age, model_gender)
 
 		k = cv2.waitKey(1)
 		if k == 27:

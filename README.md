@@ -58,7 +58,15 @@ Download face.prototxt and face.caffemodel.
 
 Put in pretain folder.
 
-## Reference Model Demo
+### Emotion Detection
+
+<https://gist.github.com/GilLevi/54aee1b8b0397721aa4b>
+
+Download EmotiW_VGG_S.caffemodel and EmotiW_VGG_S.caffemodel.prototxt (rename from deploy.prototxt).
+
+Put in pretain folder.
+
+## Pretrained Model Demo
 
 Here is a run using reference model .
 
@@ -294,6 +302,14 @@ Demo classifier task using keras and opencv.
 Demo classifier task using keras and yolo.
 
 `python agegender_yolo.py keras`
+
+# Emotion classification
+
+## Create Dataset
+
+Download FER2013 dataset.
+
+https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
 
 # Related Work
 
