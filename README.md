@@ -2,7 +2,7 @@
 
 Implement Face and Emotion detection , and Age and Gender Classification. (Experimental)
 
-![Detected](https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg "Detected")
+![Detected](https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg "Detected"){:height="50%" width="50%"}
 
 (image from wider face dataset)
 
