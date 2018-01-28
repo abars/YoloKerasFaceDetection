@@ -36,6 +36,8 @@ MacOS X 10.12
 
 PlaidML
 
+# Demo
+
 ## Pretrained Model
 
 ### Age and Gender Classification
