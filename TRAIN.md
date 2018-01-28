@@ -202,3 +202,43 @@ https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression
 
 Implementing.
 
+# Trained Experimental Model
+
+## Age Classification
+
+loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
+
+<http://www.abars.biz/keras/train_age_vgg16.hdf5>
+
+<http://www.abars.biz/keras/agegender_age_vgg16.prototxt>
+
+<http://www.abars.biz/keras/agegender_age_vgg16.caffemodel>
+
+## Gender Classification
+
+loss: 0.0691 - acc: 0.9713 - val_loss: 0.2905 - val_acc: 0.9206
+
+<http://www.abars.biz/keras/train_gender_vgg16.hdf5>
+
+<http://www.abars.biz/keras/agegender_gender_vgg16.prototxt>
+
+<http://www.abars.biz/keras/agegender_gender_vgg16.caffemodel>
+
+## Hand Detection
+
+IOU : 0.8
+
+<http://www.abars.biz/keras/vivahand_tinyyolov1_19000.weights>
+
+<https://github.com/abars/YoloKerasFaceDetection/blob/master/vivahand_tinyyolov1.cfg>
+
+## Experimental Model Demo
+
+Here is a run using hdf5.
+
+`python agegender_yolo.py keras`
+
+Here is a run using caffemodel.
+
+`python agegender_yolo.py converted`
+
