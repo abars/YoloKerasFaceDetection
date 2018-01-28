@@ -77,7 +77,9 @@ Here is a run using reference model .
 
 `python agegender_demo.py caffe`
 
-# How to train
+# How to train using Keras and Darknet
+
+Here is a training tutorial. (Experimental)
 
 https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN.md
 
