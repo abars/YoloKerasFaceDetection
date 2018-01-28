@@ -66,7 +66,7 @@ Download EmotiW_VGG_S.caffemodel and EmotiW_VGG_S.caffemodel.prototxt (rename fr
 
 Put in pretain folder.
 
-## Pretrained Model Demo
+### Pretrained Model Demo
 
 Here is a run using reference model .
 
