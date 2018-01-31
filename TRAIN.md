@@ -14,7 +14,7 @@
 
 ## Gender Classification
 
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_simple_cnn.png" width="50%" height="50%">
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_gender_simple_cnn.png" width="50%" height="50%">
 
 <http://www.abars.biz/keras/agegender_gender_simple_cnn.hdf5>
 
