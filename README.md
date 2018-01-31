@@ -21,6 +21,8 @@ Gender Classification (Keras)
 
 Keras2
 
+Tensorflow
+
 Darknet
 
 Caffe
@@ -33,11 +35,9 @@ OpenCV
 
 ## Implement Environment
 
-Mac Pro 2013
+Mac Pro 2013 (Xeon)
 
 MacOS X 10.12
-
-PlaidML
 
 # Demo
 

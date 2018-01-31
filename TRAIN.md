@@ -4,23 +4,19 @@
 
 ## Age Classification
 
-loss: 0.3099 - acc: 0.8952 - val_loss: 1.1309 - val_acc: 0.6939
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_age_miniXception.png" width="50%" height="50%">
 
-<http://www.abars.biz/keras/train_age_vgg16.hdf5>
+<http://www.abars.biz/keras/agegender_age_miniXception.hdf5>
 
-<http://www.abars.biz/keras/agegender_age_vgg16.prototxt>
+<http://www.abars.biz/keras/agegender_age_miniXception.prototxt>
 
-<http://www.abars.biz/keras/agegender_age_vgg16.caffemodel>
+<http://www.abars.biz/keras/agegender_age_miniXception.caffemodel>
 
 ## Gender Classification
 
-loss: 0.0691 - acc: 0.9713 - val_loss: 0.2905 - val_acc: 0.9206
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_simple_cnn.png" width="50%" height="50%">
 
-<http://www.abars.biz/keras/train_gender_vgg16.hdf5>
-
-<http://www.abars.biz/keras/agegender_gender_vgg16.prototxt>
-
-<http://www.abars.biz/keras/agegender_gender_vgg16.caffemodel>
+<http://www.abars.biz/keras/agegender_gender_simple_cnn.hdf5>
 
 ## Hand Detection
 
@@ -202,29 +198,21 @@ Create dataset/agegender/annotations for keras.
 
 Run classifier task using keras.
 
-`python agegender_train.py agegender`
+Network input is 64x64x3.
 
-`python agegender_train.py age`
+`python agegender_train.py age miniXception`
 
-`python agegender_train.py gender`
+Network input is 48x48x3.
+
+`python agegender_train.py gender simple_cnn`
 
 ## Test using Keras
 
 Test classifier task using keras.
 
-`python agegender_predict.py agegender`
+`python agegender_predict.py age miniXception`
 
-`python agegender_predict.py age`
-
-`python agegender_predict.py gender`
-
-Demo classifier task using keras and opencv.
-
-`python agegender_recognize.py agegender`
-
-`python agegender_recognize.py age`
-
-`python agegender_recognize.py gender`
+`python agegender_predict.py gender simple_cnn`
 
 Demo classifier task using keras and yolo.
 

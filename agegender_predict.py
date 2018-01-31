@@ -30,21 +30,26 @@ ANNOTATIONS='gender'
 
 #MODELS="vgg16"
 #MODELS="small_cnn"
-#MODELS="simple_cnn"
-MODELS="miniXception"
+MODELS="simple_cnn"
+#MODELS="miniXception"
 
 # ----------------------------------------------
 # Argument
 # ----------------------------------------------
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
   ANNOTATIONS = sys.argv[1]
+  MODELS = sys.argv[2]
 else:
-  print("usage: python agegender_predict.py [agegender/gender/age]")
+  print("usage: python agegender_predict.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
   sys.exit(1)
 
 if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="emotion":
   print("unknown annotation mode");
+  sys.exit(1)
+
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception":
+  print("unknown network mode");
   sys.exit(1)
 
 # ----------------------------------------------
@@ -59,7 +64,9 @@ if(ANNOTATIONS=="emotion"):
 	ANNOTATION_WORDS='words/emotion_words.txt'
 
 IMAGE_SIZE = 32
-if(MODELS=='simple_cnn' or MODELS=='miniXception'):
+if(MODELS=='simple_cnn'):
+	IMAGE_SIZE = 48
+if(MODELS=='miniXception'):
 	IMAGE_SIZE = 64
 if(MODELS=='vgg16'):
 	IMAGE_SIZE = 224
@@ -67,9 +74,9 @@ if(MODELS=='vgg16'):
 keras_model = load_model(MODEL_HDF5)
 keras_model.summary()
 
-keras2caffe.convert(keras_model, 'agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
+keras2caffe.convert(keras_model, 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
 
-net  = caffe.Net('agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
+net  = caffe.Net('pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
 
 # ----------------------------------------------
 # data
@@ -103,7 +110,7 @@ data = data.transpose((0, 3, 1, 2))
 
 out = net.forward_all(data = data)
 
-if(ANNOTATIONS=="emotion"):
+if(MODELS=="miniXception"):
 	pred = out['global_average_pooling2d_1']
 else:
 	if(MODELS=='vgg16'):

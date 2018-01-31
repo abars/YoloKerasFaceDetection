@@ -10,10 +10,10 @@ import sys, getopt
 import cv2
 import os
 
-#os.environ['KERAS_BACKEND'] = 'tensorflow'
+os.environ['KERAS_BACKEND'] = 'tensorflow'
 
-import plaidml.keras
-plaidml.keras.install_backend()
+#import plaidml.keras
+#plaidml.keras.install_backend()
 
 from keras.models import load_model
 from keras.preprocessing import image
@@ -140,19 +140,23 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 			continue
 
 		IMAGE_SIZE=227
-		IMAGE_SIZE_KERAS=224
-		IMAGE_SIZE_FER2013=64
+		IMAGE_SIZE_KERAS=64
 
 		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
 		img = np.expand_dims(img, axis=0)
 		img = img - (104,117,123) #BGR mean value of VGG16
 		img = img.transpose((0, 3, 1, 2))
 
-		img_fer2013 = cv2.resize(face_image, (IMAGE_SIZE_FER2013,IMAGE_SIZE_FER2013))
+		img_fer2013 = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
 		img_fer2013 = cv2.cvtColor(img_fer2013,cv2.COLOR_BGR2GRAY)
 		img_fer2013 = np.expand_dims(img_fer2013, axis=0)
 		img_fer2013 = np.expand_dims(img_fer2013, axis=3)
 		img_fer2013 = img_fer2013 / 255.0 *2 -1
+
+		img_gender = cv2.resize(face_image, (48,48))
+		img_gender = img_gender[::-1, :, ::-1].copy()	#BGR to RGB
+		img_gender = np.expand_dims(img_gender, axis=0)
+		img_gender = img_gender / 255.0
 
 		img_keras = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
 		img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
@@ -209,7 +213,7 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 			offset=offset+16
 
 		if(model_gender!=None):
-			pred_gender_keras = model_gender.predict(img_keras)[0]
+			pred_gender_keras = model_gender.predict(img_gender)[0]
 			prob_gender_keras = np.max(pred_gender_keras)
 			cls_gender_keras = pred_gender_keras.argmax()
 			cv2.putText(target_image, "Keras : %.2f" % prob_gender_keras + " " + lines_gender[cls_gender_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
@@ -272,17 +276,27 @@ def main(argv):
 		net_gender=None
 		net_emotion=None
 
+	MODELS="miniXception"
+
 	if(MODE == "converted"):
-		net_age  = caffe.Net('./pretrain/agegender_age_vgg16.prototxt', './pretrain/agegender_age_vgg16.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net('./pretrain/agegender_gender_vgg16.prototxt', './pretrain/agegender_gender_vgg16.caffemodel', caffe.TEST)
+		net_age  = caffe.Net('./pretrain/agegender_age_'+MODELS+'.prototxt', './pretrain/agegender_age_'+MODELS+'.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net('./pretrain/agegender_gender_'+MODELS+'.prototxt', './pretrain/agegender_gender_'+MODELS+'.caffemodel', caffe.TEST)
 
 	if(MODE == "keras" or MODE == "caffekeras"):
-		model_age = load_model('./pretrain/train_age_vgg16.hdf5')
-		model_gender = load_model('./pretrain/train_gender_vgg16.hdf5')
-		#if(os.path.exists('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')):
-		#	model_emotion = load_model('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')
+		model_age = load_model('./pretrain/agegender_age_'+MODELS+'.hdf5')
+		model_gender = load_model('./pretrain/agegender_gender_simple_cnn.hdf5')
+		#if(os.path.exists('./pretrain/gender_mini_XCEPTION.21-0.95.hdf5')):
+		#	model_gender = load_model('./pretrain/gender_mini_XCEPTION.21-0.95.hdf5')
 		#else:
-		model_emotion = None
+		#	model_gender = None
+		#if(os.path.exists('./pretrain/simple_CNN.81-0.96.hdf5')):
+		#	model_gender = load_model('./pretrain/simple_CNN.81-0.96.hdf5')
+		#else:
+		#	model_gender = None
+		if(os.path.exists('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')):
+			model_emotion = load_model('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')
+		else:
+			model_emotion = None
 	else:
 		model_age = None
 		model_gender = None

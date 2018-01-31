@@ -42,21 +42,26 @@ ANNOTATIONS='gender'
 #MODELS="inceptionv3"
 #MODELS="vgg16"
 #MODELS="small_cnn"
-#MODELS="simple_cnn"
-MODELS="miniXception"
+MODELS="simple_cnn"
+#MODELS="miniXception"
 
 # ----------------------------------------------
 # Argument
 # ----------------------------------------------
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
   ANNOTATIONS = sys.argv[1]
+  MODELS = sys.argv[2]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age]")
+  print("usage: python agegender_train.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
   sys.exit(1)
 
 if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
   print("unknown annotation mode");
+  sys.exit(1)
+
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception":
+  print("unknown network mode");
   sys.exit(1)
 
 # ----------------------------------------------
@@ -127,7 +132,7 @@ elif(MODELS=='small_cnn'):
    model.add(Dense(N_CATEGORIES))
    model.add(Activation('softmax',name='predictions'))
 elif(MODELS=='simple_cnn'):
-   IMAGE_SIZE = 64
+   IMAGE_SIZE = 48
    EPOCS = 50
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
 
