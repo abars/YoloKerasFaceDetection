@@ -129,12 +129,12 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 			x2=0
 		if(y2<0):
 			y2=0
-		if(x2+w2>=target_image.shape[1]):
-			w2=target_image.shape[1]-1-x2
-		if(y2+h2>=target_image.shape[0]):
-			h2=target_image.shape[0]-1-y2
+		if(x2+w2>=img.shape[1]):
+			w2=img.shape[1]-1-x2
+		if(y2+h2>=img.shape[0]):
+			h2=img.shape[0]-1-y2
 
-		face_image = target_image[y2:y2+h2, x2:x2+w2]
+		face_image = img[y2:y2+h2, x2:x2+w2]
 
 		if(face_image.shape[0]<=0 or face_image.shape[1]<=0):
 			continue
