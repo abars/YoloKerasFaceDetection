@@ -1,6 +1,6 @@
 # Yolo Keras Face Detection
 
-Implement Face and Emotion detection , and Age and Gender Classification. (Experimental)
+Implement Face detection, and Age and Gender Classification, and Emotion Classification.
 
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg" width="50%" height="50%">
 (image from wider face dataset)
@@ -9,29 +9,27 @@ Implement Face and Emotion detection , and Age and Gender Classification. (Exper
 
 ## Functions
 
-Face Detection (Keras , Darknet , Caffe)
-
-Hand Detection (Darknet , Caffe)
+Face Detection (Darknet , Caffe)
 
 Age Classification (Keras)
 
 Gender Classification (Keras)
 
+Emotion Classification (Keras)
+
 ## Requirements
 
-Keras2
-
-Tensorflow
+Keras2 + Tensorflow
 
 Darknet
 
 Caffe
 
+OpenCV
+
 Python 2.7
 
 Perl
-
-OpenCV
 
 ## Implement Environment
 
