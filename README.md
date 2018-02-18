@@ -81,9 +81,13 @@ Here is a run using reference model .
 
 # How to train using Keras and Darknet
 
-Here is a training tutorial. (Experimental)
+Here is a training tutorial.
 
 https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN.md
+
+Here is a experimental training tutorial.
+
+https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN_EXPERIMENTAL.md
 
 # Related Work
 
