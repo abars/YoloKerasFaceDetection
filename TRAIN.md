@@ -78,6 +78,12 @@ Create datase/fddb/FDDB-folds/annotations_darknet folder for darknet.
 
 `perl annotation_fddb_darknet.pl`
 
+Preview converted annotations.
+
+`perl annotation_view.pl fddb`
+
+[![FDDB dataset overview](https://img.youtube.com/vi/KGeY_PFhRYA/0.jpg)](https://www.youtube.com/watch?v=KGeY_PFhRYA&feature=youtu.be)
+
 ## Train using Darknet
 
 `cd darknet`
