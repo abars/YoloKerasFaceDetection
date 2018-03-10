@@ -20,7 +20,7 @@
 
 ## Face Detection
 
-<http://www.abars.biz/keras/fddb_yolosmallv1_36000.weights>
+<http://www.abars.biz/keras/fddb_yolosmallv1_final.weights>
 
 <https://github.com/abars/YoloKerasFaceDetection/blob/master/cfg/fddb_yolosmallv1.cfg>
 
