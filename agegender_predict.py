@@ -83,6 +83,8 @@ net  = caffe.Net('pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pret
 # ----------------------------------------------
 
 img = cv2.imread('dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
+#img = cv2.imread('dataset/agegender/annotations/agegender/validation/11_15-20_f/landmark_aligned_face.290.11594063605_713764ddeb_o.jpg')
+
 img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
 if(ANNOTATIONS=='emotion'):
 	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -109,14 +111,7 @@ print prob, cls, lines[cls]
 data = data.transpose((0, 3, 1, 2))
 
 out = net.forward_all(data = data)
-
-if(MODELS=="miniXception"):
-	pred = out['global_average_pooling2d_1']
-else:
-	if(MODELS=='vgg16'):
-		pred = out['dense_2']
-	else:
-		pred = out['predictions']
+pred = out[net.outputs[0]]
 
 prob = np.max(pred)
 cls = pred.argmax()

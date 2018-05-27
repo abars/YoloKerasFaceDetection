@@ -137,8 +137,12 @@ elif(MODELS=='simple_cnn'):
    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
 
    model = Sequential()
+
+   input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
+   model.add(InputLayer(input_shape=input_shape))
+
    model.add(Convolution2D(filters=16, kernel_size=(7, 7), padding='same',
-                         name='image_array', input_shape=input_shape))
+                         name='image_array'))
    model.add(BatchNormalization())
    model.add(Convolution2D(filters=16, kernel_size=(7, 7), padding='same'))
    model.add(BatchNormalization())

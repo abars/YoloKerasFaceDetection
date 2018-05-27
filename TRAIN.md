@@ -18,9 +18,17 @@
 
 <http://www.abars.biz/keras/agegender_gender_simple_cnn.hdf5>
 
+<http://www.abars.biz/keras/agegender_gender_simple_cnn.prototxt>
+
+<http://www.abars.biz/keras/agegender_gender_simple_cnn.caffemodel>
+
 ## Face Detection
 
 <http://www.abars.biz/keras/fddb_yolosmallv1_final.weights>
+
+<http://www.abars.biz/keras/fddb_yolosmallv1_final.prototxt>
+
+<http://www.abars.biz/keras/fddb_yolosmallv1_final.caffemodel>
 
 <https://github.com/abars/YoloKerasFaceDetection/blob/master/cfg/fddb_yolosmallv1.cfg>
 
