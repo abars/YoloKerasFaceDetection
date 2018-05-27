@@ -26,11 +26,11 @@
 
 <http://www.abars.biz/keras/fddb_yolosmallv1_final.weights>
 
-<http://www.abars.biz/keras/fddb_yolosmallv1_final.prototxt>
-
-<http://www.abars.biz/keras/fddb_yolosmallv1_final.caffemodel>
-
 <https://github.com/abars/YoloKerasFaceDetection/blob/master/cfg/fddb_yolosmallv1.cfg>
+
+<http://www.abars.biz/keras/fddb_yolosmallv1.prototxt>
+
+<http://www.abars.biz/keras/fddb_yolosmallv1.caffemodel>
 
 <!--
 ## Hand Detection
