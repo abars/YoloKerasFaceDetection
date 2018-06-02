@@ -78,8 +78,8 @@ NUM_TRAINING = 8634
 NUM_VALIDATION = 2889
 BATCH_SIZE = 16
 
-PLOT_FILE='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
-MODEL_HDF5='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 
 #Size
 if ANNOTATIONS=='agegender':
