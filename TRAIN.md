@@ -124,6 +124,8 @@ Convert to Caffe model.
 
 ## Create Dataset
 
+### Use AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset
+
 Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset (agegender folder)  and put in the dataset/agegender folder.
 
 https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
@@ -131,6 +133,16 @@ https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
 Create dataset/agegender/annotations for keras.
 
 `perl annotation_agegender_keras.pl`
+
+### Use IMDB-WIKI dataset
+
+Download IMDB-WIKI dataset (Download faces only 7gb) and put in the dataset/imdb_crop folder.
+
+https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/
+
+Create dataset/agegender/annotations for keras.
+
+`python annotation_imdb_keras.py`
 
 ## Train using Keras
 
