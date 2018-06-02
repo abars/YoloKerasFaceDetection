@@ -44,6 +44,7 @@ ANNOTATIONS='gender'
 #MODELS="small_cnn"
 MODELS="simple_cnn"
 #MODELS="miniXception"
+#MODELS="squeezenet"
 
 DATASET_ROOT_PATH=""
 #DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
@@ -52,18 +53,20 @@ DATASET_ROOT_PATH=""
 # Argument
 # ----------------------------------------------
 
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
   ANNOTATIONS = sys.argv[1]
   MODELS = sys.argv[2]
+  if len(sys.argv) >= 4:
+    DATASET_ROOT_PATH=sys.argv[3]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
+  print("usage: python agegender_train.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet] [datasetroot(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
   print("unknown annotation mode");
   sys.exit(1)
 
-if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception":
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception" and MODELS!="squeezenet":
   print("unknown network mode");
   sys.exit(1)
 
@@ -279,6 +282,14 @@ elif(MODELS=='miniXception'):
     output = Activation('softmax',name='predictions')(x)
 
     model = Model(img_input, output)
+elif(MODELS=='squeezenet'):
+  IMAGE_SIZE=227
+  EPOCS = 50
+  import sys
+  sys.path.append('../keras-squeezenet-master')
+  from keras_squeezenet import SqueezeNet
+  input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
+  model = SqueezeNet(weights=None, classes=N_CATEGORIES, input_tensor=input_tensor)
 else:
    raise Exception('invalid model name')
 
