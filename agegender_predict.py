@@ -41,10 +41,10 @@ if len(sys.argv) == 3:
   ANNOTATIONS = sys.argv[1]
   MODELS = sys.argv[2]
 else:
-  print("usage: python agegender_predict.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
+  print("usage: python agegender_predict.py [agegender/gender/age/emotion/gender_octavio] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="emotion":
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="emotion" and ANNOTATIONS!="gender_octavio":
   print("unknown annotation mode");
   sys.exit(1)
 
@@ -62,6 +62,9 @@ ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 if(ANNOTATIONS=="emotion"):
 	MODEL_HDF5='pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5'
 	ANNOTATION_WORDS='words/emotion_words.txt'
+if(ANNOTATIONS=="gender_octavio"):
+	MODEL_HDF5='pretrain/gender_mini_XCEPTION.21-0.95.hdf5'
+	ANNOTATION_WORDS='words/agegender_gender_words.txt'
 
 IMAGE_SIZE = 32
 if(MODELS=='simple_cnn'):
@@ -82,11 +85,12 @@ net  = caffe.Net('pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pret
 # data
 # ----------------------------------------------
 
-img = cv2.imread('dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
-#img = cv2.imread('dataset/agegender/annotations/agegender/validation/11_15-20_f/landmark_aligned_face.290.11594063605_713764ddeb_o.jpg')
+#img = cv2.imread('dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg')
+img = cv2.imread('dataset/agegender/annotations/agegender/validation/11_15-20_f/landmark_aligned_face.290.11594063605_713764ddeb_o.jpg')
+#img = cv2.imread('dataset/agegender/annotations/agegender/validation/3_15-20_m/landmark_aligned_face.291.11593859573_1419d380b4_o.jpg')
 
 img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-if(ANNOTATIONS=='emotion'):
+if(ANNOTATIONS=='emotion' or ANNOTATIONS=='gender_octavio'):
 	img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 	img = np.expand_dims(img, axis=2)
 else:
@@ -95,7 +99,7 @@ else:
 data = np.array(img, dtype=np.float32)
 data.shape = (1,) + data.shape
 data /= 255
-if(ANNOTATIONS=='emotion'):
+if(ANNOTATIONS=='emotion' or ANNOTATIONS=='gender_octavio'):
 	data = data*2 - 1
 
 # ----------------------------------------------
