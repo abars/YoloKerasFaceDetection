@@ -248,61 +248,48 @@ def get_mean(binary_proto,width,height):
 	return mean
 
 def main(argv):
-	MODE="caffe"
+	MODE=""
 	DEMO_IMG=""
+	DATASET_ROOT_PATH="./"
 
 	if len(sys.argv) >= 2:
 		MODE = sys.argv[1]
 		if(len(sys.argv)>=3):
 			DEMO_IMG=sys.argv[2]
 	else:
-		print("usage: python agegender_demo.py [caffe/keras/caffekeras/converted]")
+		print("usage: python agegender_demo.py [caffe/keras/converted] [image(optional)]")
 		sys.exit(1)
-	if(MODE!="caffe" and MODE!="keras" and MODE!="caffekeras" and MODE!="converted"):
+	if(MODE!="caffe" and MODE!="keras" and MODE!="converted"):
 		print("Unknown mode "+MODE)
 		sys.exit(1)
 
-	model_filename = './pretrain/face.prototxt'
-	weight_filename = './pretrain/face.caffemodel'
+	net_face = caffe.Net(DATASET_ROOT_PATH+'pretrain/face.prototxt', DATASET_ROOT_PATH+'pretrain/face.caffemodel', caffe.TEST)
 
-	net = caffe.Net(model_filename, weight_filename, caffe.TEST)
+	#Load Model
+	net_age=None
+	net_gender=None
+	net_emotion=None
 
-	if(MODE == "caffe" or MODE == "caffekeras"):
-		net_age  = caffe.Net('./pretrain/deploy_age.prototxt', './pretrain/age_net.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net('./pretrain/deploy_gender.prototxt', './pretrain/gender_net.caffemodel', caffe.TEST)
-		net_emotion = caffe.Net('./pretrain/emotion_miniXception.prototxt', './pretrain/emotion_miniXception.caffemodel', caffe.TEST)
-	else:
-		net_age=None
-		net_gender=None
-		net_emotion=None
+	model_age = None
+	model_gender = None
+	model_emotion = None
 
-	MODELS="miniXception"
+	if(MODE == "caffe"):
+		net_age  = caffe.Net(DATASET_ROOT_PATH+'pretrain/deploy_age.prototxt', DATASET_ROOT_PATH+'pretrain/age_net.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net(DATASET_ROOT_PATH+'pretrain/deploy_gender.prototxt', DATASET_ROOT_PATH+'pretrain/gender_net.caffemodel', caffe.TEST)
+		net_emotion = caffe.Net(DATASET_ROOT_PATH+'pretrain/emotion_miniXception.prototxt', DATASET_ROOT_PATH+'pretrain/emotion_miniXception.caffemodel', caffe.TEST)
+	elif(MODE == "converted"):
+		net_age  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.caffemodel', caffe.TEST)
+		net_gender  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.caffemodel', caffe.TEST)
+	elif(MODE == "keras"):
+		model_age = load_model(DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.hdf5')
+		model_gender = load_model(DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.hdf5')
+		if(os.path.exists(DATASET_ROOT_PATH+'pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')):
+			model_emotion = load_model(DATASET_ROOT_PATH+'pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')
 
-	if(MODE == "converted"):
-		net_age  = caffe.Net('./pretrain/agegender_age_'+MODELS+'.prototxt', './pretrain/agegender_age_'+MODELS+'.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net('./pretrain/agegender_gender_'+MODELS+'.prototxt', './pretrain/agegender_gender_'+MODELS+'.caffemodel', caffe.TEST)
-
-	if(MODE == "keras" or MODE == "caffekeras"):
-		model_age = load_model('./pretrain/agegender_age_'+MODELS+'.hdf5')
-		model_gender = load_model('./pretrain/agegender_gender_simple_cnn.hdf5')
-		#if(os.path.exists('./pretrain/gender_mini_XCEPTION.21-0.95.hdf5')):
-		#	model_gender = load_model('./pretrain/gender_mini_XCEPTION.21-0.95.hdf5')
-		#else:
-		#	model_gender = None
-		#if(os.path.exists('./pretrain/simple_CNN.81-0.96.hdf5')):
-		#	model_gender = load_model('./pretrain/simple_CNN.81-0.96.hdf5')
-		#else:
-		#	model_gender = None
-		if(os.path.exists('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')):
-			model_emotion = load_model('./pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')
-		else:
-			model_emotion = None
-	else:
-		model_age = None
-		model_gender = None
-		model_emotion = None
-
+	#Detection
 	while True:
+		#Face Detection
 		cap = cv2.VideoCapture(0)
 		ret, frame = cap.read() #BGR
 		img=frame
@@ -313,11 +300,13 @@ def main(argv):
 			img = caffe.io.load_image(DEMO_IMG) # load the image using caffe io
 			inputs = img
 		
-		transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
+		transformer = caffe.io.Transformer({'data': net_face.blobs['data'].data.shape})
 		transformer.set_transpose('data', (2,0,1))
-		out = net.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
+		out = net_face.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
+
+		#Age and Gender Detection
 		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, net_emotion, model_age, model_gender, model_emotion)
 
 		k = cv2.waitKey(1)
