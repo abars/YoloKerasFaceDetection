@@ -59,10 +59,10 @@ if len(sys.argv) >= 3:
   if len(sys.argv) >= 4:
     DATASET_ROOT_PATH=sys.argv[3]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet] [datasetroot(optional)]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age":
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
   print("unknown annotation mode");
   sys.exit(1)
 
@@ -88,6 +88,8 @@ if ANNOTATIONS=='age':
   N_CATEGORIES=8
 if ANNOTATIONS=='gender':
   N_CATEGORIES=2
+if ANNOTATIONS=='age101':
+  N_CATEGORIES=101
 
 #model
 if(MODELS=='inceptionv3'):

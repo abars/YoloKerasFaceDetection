@@ -16,6 +16,7 @@ else:
 IMDB_PATH=DATASET_ROOT_PATH+"dataset/imdb_crop/"
 GENDER_PATH=DATASET_ROOT_PATH+"dataset/agegender/annotations/gender/"
 AGE_PATH=DATASET_ROOT_PATH+"dataset/agegender/annotations/age/"
+AGE101_PATH=DATASET_ROOT_PATH+"dataset/agegender/annotations/age101/"
 
 if(not os.path.exists(DATASET_ROOT_PATH+"dataset/agegender/annotations/")):
 	os.mkdir(DATASET_ROOT_PATH+"dataset/agegender/annotations")
@@ -49,6 +50,14 @@ if(not os.path.exists(AGE_PATH)):
 	os.mkdir(AGE_PATH+"validation/38-43")
 	os.mkdir(AGE_PATH+"validation/48-53")
 	os.mkdir(AGE_PATH+"validation/60-")
+
+if(not os.path.exists(AGE101_PATH)):
+	os.mkdir(AGE101_PATH)
+	os.mkdir(AGE101_PATH+"train")
+	os.mkdir(AGE101_PATH+"validation")
+	for i in range(0,101):
+		os.mkdir(AGE101_PATH+"train/"+format(i, '03d'))
+		os.mkdir(AGE101_PATH+"validation/"+format(i, '03d'))
 
 def calc_age(taken, dob):
 	birth = datetime.fromordinal(max(int(dob) - 366, 1))
@@ -113,5 +122,4 @@ for i in range(len(full_path)):
 	src_img=IMDB_PATH+full_path[i][0]
 	shutil.copyfile(src_img, AGE_PATH+train_or_validation+"/"+get_age_path(age[i])+"/"+str(i)+".jpg")
 	shutil.copyfile(src_img, GENDER_PATH+train_or_validation+"/"+get_gender_path(gender[i])+"/"+str(i)+".jpg")
-
-
+	shutil.copyfile(src_img, AGE101_PATH+train_or_validation+"/"+format(age[i],"03d")+"/"+str(i)+".jpg")
