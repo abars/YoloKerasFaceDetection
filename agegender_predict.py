@@ -33,18 +33,23 @@ ANNOTATIONS='gender'
 MODELS="simple_cnn"
 #MODELS="miniXception"
 
+DATASET_ROOT_PATH=""
+#DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
+
 # ----------------------------------------------
 # Argument
 # ----------------------------------------------
 
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
   ANNOTATIONS = sys.argv[1]
   MODELS = sys.argv[2]
+  if len(sys.argv) >= 4:
+    DATASET_ROOT_PATH=sys.argv[3]
 else:
-  print("usage: python agegender_predict.py [agegender/gender/age/emotion/gender_octavio] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception]")
+  print("usage: python agegender_predict.py [agegender/gender/age/age101/emotion/gender_octavio] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception] [datasetroot(optional)]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="emotion" and ANNOTATIONS!="gender_octavio":
+if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101" and ANNOTATIONS!="emotion" and ANNOTATIONS!="gender_octavio":
   print("unknown annotation mode");
   sys.exit(1)
 
@@ -56,14 +61,14 @@ if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!
 # converting
 # ----------------------------------------------
 
-MODEL_HDF5='pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
 ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 
 if(ANNOTATIONS=="emotion"):
-	MODEL_HDF5='pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5'
+	MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5'
 	ANNOTATION_WORDS='words/emotion_words.txt'
 if(ANNOTATIONS=="gender_octavio"):
-	MODEL_HDF5='pretrain/gender_mini_XCEPTION.21-0.95.hdf5'
+	MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/gender_mini_XCEPTION.21-0.95.hdf5'
 	ANNOTATION_WORDS='words/agegender_gender_words.txt'
 
 IMAGE_SIZE = 32
@@ -77,9 +82,9 @@ if(MODELS=='vgg16'):
 keras_model = load_model(MODEL_HDF5)
 keras_model.summary()
 
-keras2caffe.convert(keras_model, 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
+keras2caffe.convert(keras_model, DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
 
-net  = caffe.Net('pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', 'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
+net  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
 
 # ----------------------------------------------
 # data
@@ -106,10 +111,16 @@ if(ANNOTATIONS=='emotion' or ANNOTATIONS=='gender_octavio'):
 # verify
 # ----------------------------------------------
 
+if(ANNOTATIONS=="age101"):
+	lines=[]
+	for i in range(0,101):
+		lines.append("age."+str(i))
+else:
+	lines=open(ANNOTATION_WORDS).readlines()
+
 pred = keras_model.predict(data)[0]
 prob = np.max(pred)
 cls = pred.argmax()
-lines=open(ANNOTATION_WORDS).readlines()
 print prob, cls, lines[cls]
 
 data = data.transpose((0, 3, 1, 2))
@@ -119,6 +130,5 @@ pred = out[net.outputs[0]]
 
 prob = np.max(pred)
 cls = pred.argmax()
-lines=open(ANNOTATION_WORDS).readlines()
 print prob, cls, lines[cls]
 
