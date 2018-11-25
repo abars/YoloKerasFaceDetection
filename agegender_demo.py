@@ -1,24 +1,22 @@
 # ----------------------------------------------
-# Reference gender from camera face
-# (Quote from https://github.com/xingwangsfu/caffe-yolo)
+# Yolo Keras Face Detection from WebCamera
 # ----------------------------------------------
 
-import caffe
 from datetime import datetime
 import numpy as np
 import sys, getopt
 import cv2
 import os
+from keras import backend as K
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
-
-#import plaidml.keras
-#plaidml.keras.install_backend()
 
 from keras.models import load_model
 from keras.preprocessing import image
 
-def interpret_output(output, img_width, img_height):
+#YOLOV1
+#reference from https://github.com/xingwangsfu/caffe-yolo
+def interpret_output_yolov1(output, img_width, img_height):
 	classes = ["face"]
 	w_img = img_width
 	h_img = img_height
@@ -82,7 +80,148 @@ def iou(box1,box2):
 	else : intersection =  tb*lr
 	return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
 
-def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, net_emotion, model_age, model_gender, model_emotion):
+#YOLOV2
+#reference from https://github.com/experiencor/keras-yolo2
+# https://github.com/experiencor/keras-yolo2/blob/master/LICENSE
+def interpret_output_yolov2(output, img_width, img_height):
+	anchors=[0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828]
+
+	netout=output
+	nb_class=80
+	obj_threshold=0.4
+	nms_threshold=0.3
+
+	grid_h, grid_w, nb_box = netout.shape[:3]
+
+	size = 4 + nb_class + 1;
+	nb_box=5
+
+	netout=netout.reshape(grid_h,grid_w,nb_box,size)
+
+	boxes = []
+	
+	# decode the output by the network
+	netout[..., 4]  = _sigmoid(netout[..., 4])
+	netout[..., 5:] = netout[..., 4][..., np.newaxis] * _softmax(netout[..., 5:])
+	netout[..., 5:] *= netout[..., 5:] > obj_threshold
+
+	for row in range(grid_h):
+		for col in range(grid_w):
+			for b in range(nb_box):
+				# from 4th element onwards are confidence and class classes
+				classes = netout[row,col,b,5:]
+				
+				if np.sum(classes) > 0:
+					# first 4 elements are x, y, w, and h
+					x, y, w, h = netout[row,col,b,:4]
+
+					x = (col + _sigmoid(x)) / grid_w # center position, unit: image width
+					y = (row + _sigmoid(y)) / grid_h # center position, unit: image height
+					w = anchors[2 * b + 0] * np.exp(w) / grid_w # unit: image width
+					h = anchors[2 * b + 1] * np.exp(h) / grid_h # unit: image height
+					confidence = netout[row,col,b,4]
+					
+					box = bounding_box(x-w/2, y-h/2, x+w/2, y+h/2, confidence, classes)
+					
+					boxes.append(box)
+
+	# suppress non-maximal boxes
+	for c in range(nb_class):
+		sorted_indices = list(reversed(np.argsort([box.classes[c] for box in boxes])))
+
+		for i in range(len(sorted_indices)):
+			index_i = sorted_indices[i]
+			
+			if boxes[index_i].classes[c] == 0: 
+				continue
+			else:
+				for j in range(i+1, len(sorted_indices)):
+					index_j = sorted_indices[j]
+					
+					if bbox_iou(boxes[index_i], boxes[index_j]) >= nms_threshold:
+						boxes[index_j].classes[c] = 0
+						
+	# remove the boxes which are less likely than a obj_threshold
+	boxes = [box for box in boxes if box.get_score() > obj_threshold]
+	
+	result = []
+	for i in range(len(boxes)):
+		if(boxes[i].classes[0]==0):
+			continue
+		predicted_class = "face"
+		score = boxes[i].score
+		result.append([predicted_class,(boxes[i].xmax+boxes[i].xmin)*img_width/2,(boxes[i].ymax+boxes[i].ymin)*img_height/2,(boxes[i].xmax-boxes[i].xmin)*img_width,(boxes[i].ymax-boxes[i].ymin)*img_height,score])
+
+	return result
+
+class bounding_box:
+	def __init__(self, xmin, ymin, xmax, ymax, c = None, classes = None):
+		self.xmin = xmin
+		self.ymin = ymin
+		self.xmax = xmax
+		self.ymax = ymax
+		
+		self.c     = c
+		self.classes = classes
+
+		self.label = -1
+		self.score = -1
+
+	def get_label(self):
+		if self.label == -1:
+			self.label = np.argmax(self.classes)
+		
+		return self.label
+	
+	def get_score(self):
+		if self.score == -1:
+			self.score = self.classes[self.get_label()]
+			
+		return self.score
+
+def bbox_iou(box1, box2):
+	intersect_w = _interval_overlap([box1.xmin, box1.xmax], [box2.xmin, box2.xmax])
+	intersect_h = _interval_overlap([box1.ymin, box1.ymax], [box2.ymin, box2.ymax])  
+	
+	intersect = intersect_w * intersect_h
+
+	w1, h1 = box1.xmax-box1.xmin, box1.ymax-box1.ymin
+	w2, h2 = box2.xmax-box2.xmin, box2.ymax-box2.ymin
+	
+	union = w1*h1 + w2*h2 - intersect
+	
+	return float(intersect) / union
+
+def _interval_overlap(interval_a, interval_b):
+	x1, x2 = interval_a
+	x3, x4 = interval_b
+
+	if x3 < x1:
+		if x4 < x1:
+			return 0
+		else:
+			return min(x2,x4) - x1
+	else:
+		if x2 < x3:
+			 return 0
+		else:
+			return min(x2,x4) - x3          
+
+def _sigmoid(x):
+	return 1. / (1. + np.exp(-x))
+
+def _softmax(x, axis=-1, t=-100.):
+	x = x - np.max(x)
+	
+	if np.min(x) < t:
+		x = x/np.min(x)*t
+		
+	e_x = np.exp(x)
+	
+	return e_x / e_x.sum(axis, keepdims=True)
+
+#display result
+def show_results(img,results, img_width, img_height, model_age, model_gender, model_emotion):
 	img_cp = img.copy()
 	for i in range(len(results)):
 		x = int(results[i][1])
@@ -113,26 +252,11 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 		cv2.putText(img_cp,results[i][0] + ' : %.2f' % results[i][5],(xmin+5,ymin-7),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,0),1)	
 
 		target_image=img_cp
-		margin=w/4
 
-		x=xmin
-		y=ymin
-		w*=2
-		h*=2
-
-		x2=x-margin
-		y2=y-margin
-		w2=w+margin*2
-		h2=h+margin*2
-
-		if(x2<0):
-			x2=0
-		if(y2<0):
-			y2=0
-		if(x2+w2>=img.shape[1]):
-			w2=img.shape[1]-1-x2
-		if(y2+h2>=img.shape[0]):
-			h2=img.shape[0]-1-y2
+		x2=xmin
+		y2=ymin
+		w2=w*2
+		h2=h*2
 
 		face_image = img[y2:y2+h2, x2:x2+w2]
 
@@ -165,11 +289,6 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 
 		caffe_final_layer="prob"
 		gender_revert=True
-		if(MODE=="converted"):
-			caffe_final_layer="dense_2"
-			img = img_keras.copy()
-			img = img.transpose((0, 3, 1, 2))
-			gender_revert = False
 
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
@@ -177,33 +296,6 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 		lines_age=open('words/agegender_age_words.txt').readlines()
 		lines_gender=open('words/agegender_gender_words.txt').readlines()
 		lines_fer2013=open('words/emotion_words.txt').readlines()
-
-		if(net_age!=None):
-			out = net_age.forward_all(data = img)
-			pred_age = out[caffe_final_layer]
-			prob_age = np.max(pred_age)
-			cls_age = pred_age.argmax()
-			cv2.putText(target_image, "Caffe : %.2f" % prob_age + " " + lines_age[cls_age], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-			offset=offset+16
-
-		if(net_gender!=None):
-			out = net_gender.forward_all(data = img)
-			pred_gender = out[caffe_final_layer]
-			prob_gender = np.max(pred_gender)
-			if(gender_revert):
-				cls_gender = 1-pred_gender.argmax()
-			else:
-				cls_gender = pred_gender.argmax()
-			cv2.putText(target_image, "Caffe : %.2f" % prob_gender + " " + lines_gender[cls_gender], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-			offset=offset+16
-
-		if(net_emotion!=None):
-			out = net_emotion.forward_all(data = img_fer2013.transpose((0, 3, 1, 2)))
-			pred_emotion = out["global_average_pooling2d_1"]
-			prob_emotion = np.max(pred_emotion)
-			cls_emotion = pred_emotion.argmax()
-			cv2.putText(target_image, "Caffe : %.2f" % prob_emotion + " " + lines_fer2013[cls_emotion], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
-			offset=offset+16
 
 		if(model_age!=None):
 			pred_age_keras = model_age.predict(img_keras)[0]
@@ -226,66 +318,19 @@ def show_results(MODE,img,results, img_width, img_height, net_age, net_gender, n
 			cv2.putText(target_image, "Keras : %.2f" % prob_emotion_keras + " " + lines_fer2013[cls_emotion_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
-	cv2.imshow('YOLO detection',img_cp)
+	cv2.imshow('YoloKerasFace detection',img_cp)
 	
-	#if(DEMO_IMG!=""):
-	#	cv2.imwrite("detection.jpg", img_cp)
-	#	cv2.waitKey(1000)
-
-def get_mean(binary_proto,width,height):
-	mean_filename=binary_proto
-	proto_data = open(mean_filename, "rb").read()
-	a = caffe.io.caffe_pb2.BlobProto.FromString(proto_data)
-	mean  = caffe.io.blobproto_to_array(a)[0]
-	print "mean value of "+binary_proto+" is "+str(mean)+" shape "+str(mean.shape)
-
-	shape=(mean.shape[0],height,width);
-	mean=mean.copy()
-	mean.resize(shape)
-
-	print "resized mean value is "+str(mean)
-
-	return mean
-
 def main(argv):
-	MODE=""
-	DEMO_IMG=""
-	DATASET_ROOT_PATH="./"
-
-	if len(sys.argv) >= 2:
-		MODE = sys.argv[1]
-		if(len(sys.argv)>=3):
-			DEMO_IMG=sys.argv[2]
-	else:
-		print("usage: python agegender_demo.py [caffe/keras/converted] [image(optional)]")
-		sys.exit(1)
-	if(MODE!="caffe" and MODE!="keras" and MODE!="converted"):
-		print("Unknown mode "+MODE)
-		sys.exit(1)
-
-	net_face = caffe.Net(DATASET_ROOT_PATH+'pretrain/face.prototxt', DATASET_ROOT_PATH+'pretrain/face.caffemodel', caffe.TEST)
+	MODEL_ROOT_PATH="./pretrain/"
 
 	#Load Model
-	net_age=None
-	net_gender=None
-	net_emotion=None
-
-	model_age = None
-	model_gender = None
-	model_emotion = None
-
-	if(MODE == "caffe"):
-		net_age  = caffe.Net(DATASET_ROOT_PATH+'pretrain/deploy_age.prototxt', DATASET_ROOT_PATH+'pretrain/age_net.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net(DATASET_ROOT_PATH+'pretrain/deploy_gender.prototxt', DATASET_ROOT_PATH+'pretrain/gender_net.caffemodel', caffe.TEST)
-		net_emotion = caffe.Net(DATASET_ROOT_PATH+'pretrain/emotion_miniXception.prototxt', DATASET_ROOT_PATH+'pretrain/emotion_miniXception.caffemodel', caffe.TEST)
-	elif(MODE == "converted"):
-		net_age  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.caffemodel', caffe.TEST)
-		net_gender  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.caffemodel', caffe.TEST)
-	elif(MODE == "keras"):
-		model_age = load_model(DATASET_ROOT_PATH+'pretrain/agegender_age_miniXception.hdf5')
-		model_gender = load_model(DATASET_ROOT_PATH+'pretrain/agegender_gender_simple_cnn.hdf5')
-		if(os.path.exists(DATASET_ROOT_PATH+'pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')):
-			model_emotion = load_model(DATASET_ROOT_PATH+'pretrain/fer2013_mini_XCEPTION.102-0.66.hdf5')
+	model_face = load_model(MODEL_ROOT_PATH+'yolov2_face.h5')
+	model_age = load_model(MODEL_ROOT_PATH+'agegender_age_miniXception.hdf5')
+	model_gender = load_model(MODEL_ROOT_PATH+'agegender_gender_simple_cnn.hdf5')
+	if(os.path.exists(MODEL_ROOT_PATH+'fer2013_mini_XCEPTION.102-0.66.hdf5')):
+		model_emotion = load_model(MODEL_ROOT_PATH+'fer2013_mini_XCEPTION.102-0.66.hdf5')
+	else:
+		model_emotion = None
 
 	#Detection
 	while True:
@@ -296,18 +341,14 @@ def main(argv):
 		img = img[...,::-1]  #BGR 2 RGB
 		inputs = img.copy() / 255.0
 		
-		if(DEMO_IMG!=""):
-			img = caffe.io.load_image(DEMO_IMG) # load the image using caffe io
-			inputs = img
-		
-		transformer = caffe.io.Transformer({'data': net_face.blobs['data'].data.shape})
-		transformer.set_transpose('data', (2,0,1))
-		out = net_face.forward_all(data=np.asarray([transformer.preprocess('data', inputs)]))
 		img_cv = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-		results = interpret_output(out['layer20-fc'][0], img.shape[1], img.shape[0])
+		img_camera = cv2.resize(inputs, (416,416))
+		img_camera = np.expand_dims(img_camera, axis=0)
+		out2 = model_face.predict(img_camera)[0]
+		results = interpret_output_yolov2(out2, img.shape[1], img.shape[0])
 
 		#Age and Gender Detection
-		show_results(MODE,img_cv,results, img.shape[1], img.shape[0], net_age, net_gender, net_emotion, model_age, model_gender, model_emotion)
+		show_results(img_cv,results, img.shape[1], img.shape[0], model_age, model_gender, model_emotion)
 
 		k = cv2.waitKey(1)
 		if k == 27:
