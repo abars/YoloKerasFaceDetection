@@ -27,19 +27,19 @@ Python 2.7
 
 Perl (for Training)
 
-# Demo
+# Test
 
-## Download Pretrained Model
+## Download Pretrained-Model
 
 `python download_model.py`
 
-### Pretrained Model Demo
+## Predict from Camera Image
 
-Here is a run using reference model .
+Here is a run using pretrained model .
 
 `python agegender_demo.py`
 
-# How to train using Keras and Darknet
+# Train
 
 Here is a training tutorial.
 
