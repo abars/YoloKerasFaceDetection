@@ -1,78 +1,16 @@
 # How to train using Keras and Darknet
 
-# Our Pretrained Model
-
-## Age Classification
-
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_age_miniXception.png" width="50%" height="50%">
-
-<http://www.abars.biz/keras/agegender_age_miniXception.hdf5>
-
-<http://www.abars.biz/keras/agegender_age_miniXception.prototxt>
-
-<http://www.abars.biz/keras/agegender_age_miniXception.caffemodel>
-
-## Gender Classification
-
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/agegender_gender_simple_cnn.png" width="50%" height="50%">
-
-<http://www.abars.biz/keras/agegender_gender_simple_cnn.hdf5>
-
-<http://www.abars.biz/keras/agegender_gender_simple_cnn.prototxt>
-
-<http://www.abars.biz/keras/agegender_gender_simple_cnn.caffemodel>
-
-## Face Detection
-
-<http://www.abars.biz/keras/fddb_yolosmallv1_final.weights>
-
-<https://github.com/abars/YoloKerasFaceDetection/blob/master/cfg/fddb_yolosmallv1.cfg>
-
-<http://www.abars.biz/keras/fddb_yolosmallv1.prototxt>
-
-<http://www.abars.biz/keras/fddb_yolosmallv1.caffemodel>
-
-<!--
-## Hand Detection
-
-<http://www.abars.biz/keras/vivahand_tinyyolov1_19000.weights>
-
-<https://github.com/abars/YoloKerasFaceDetection/blob/master/vivahand_tinyyolov1.cfg>
--->
-
-## Our Pretrained Model Demo
-
-Here is a run using hdf5.
-
-`python agegender_demo.py keras`
-
-Here is a run using caffemodel.
-
-`python agegender_demo.py converted`
-
 # Install
 
-## Modify Darknet
+## Keras
+
+`pip install keras`
+
+## Darknet
 
 Download Darknet and put in the same folder.
 
 https://github.com/pjreddie/darknet
-
-Compile with <https://github.com/abars/YoloKerasFaceDetection/blob/master/darknet_custom/yolo.c> for custom classes and custom cfg.
-
-`void train_yolo(char *cfgfile, char *weightfile,const char *train_images,const char *backup_directory)`
-
-`draw_detections(im, l.side*l.side*l.n, thresh, boxes, probs, voc_names, alphabet, l.classes);`
-
-`int class = find_int_arg(argc, argv, "-class", 20);`
-
-`char *train_images = find_char_arg(argc, argv, "-train", 0);`
-
-`char *backup_directory = find_char_arg(argc, argv, "-backup", 0);`
-
-`else if(0==strcmp(argv[2], "train")) train_yolo(cfg, weights, train_images, backup_directory);`
-
-`else if(0==strcmp(argv[2], "demo")) demo(cfg, weights, thresh, cam_index, filename, voc_names, class, frame_skip, prefix, out_filename);`
 
 # Face Detection (FDDB)
 
@@ -94,31 +32,29 @@ Preview converted annotations.
 
 ## Train using Darknet
 
+Here is a training using YoloV2.
+
+Download initial weight file yolov2-tiny.weights and put in the same folder. (Important)
+
 `cd darknet`
 
-`./darknet yolo train ../cfg/fddb_yolosmallv1.cfg -train ../dataset/fddb/FDDB-folds/annotations_darknet/train.txt -backup ./backup/ -class 1`
+`./darknet detector train data/face.data cfg/yolov2-tiny-train.cfg yolov2-tiny.weights`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet yolo test ../cfg/fddb_yolosmallv1.cfg ./backup/fddb_yolosmallv1_36000.weights ../dataset/fddb/originalPics/2002/07/19/big/img_18 -class 1`
+`./darknet detector demo data/face.data cfg/yolov2-tiny.cfg backup-face/yolov2-tiny-train_413600.weights -c 0`
 
-Here is a run.
+## Convert to Keras Model
 
-`./darknet yolo demo ../cfg/fddb_yolosmallv1.cfg ./backup/fddb_yolosmallv1_36000.weights -class 1`
+Download YAD2K
 
-## Convert to CaffeModel
+https://github.com/allanzelener/YAD2K
 
-Download pytorch-caffe-darknet-convert and put in the same folder.
+This is a convert script.
 
-https://github.com/marvis/pytorch-caffe-darknet-convert
-
-Convert to Caffe model.
-
-`cd pytorch-caffe-darknet-convert`
-
-`python darknet2caffe.py ../cfg/fddb_yolosmallv1.cfg ./backup/fddb_yolosmallv1_36000.weights face.prototxt face.caffemodel`
+`python3 yad2k.py yolov2-tiny.cfg yolov2-tiny.weights yolov2-face.h5`
 
 # Age and Gender classification
 
@@ -167,15 +103,3 @@ Test classifier task using keras.
 Demo classifier task using keras and yolo.
 
 `python agegender_demo.py keras`
-
-# Emotion classification
-
-## Create Dataset
-
-Download FER2013 dataset.
-
-https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data
-
-## Train
-
-Implementing.
