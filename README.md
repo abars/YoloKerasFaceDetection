@@ -11,13 +11,11 @@ Implement Face detection, and Age and Gender Classification using Keras.
 
 Face Detection
 
-Age Classification
-
-Gender Classification
+Age and Gender Classification
 
 ## Requirements
 
-Keras2 + Tensorflow
+Keras2 (Tensorflow backend)
 
 Darknet
 
@@ -45,18 +43,9 @@ Here is a training tutorial.
 
 https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN.md
 
-Here is a experimental training tutorial.
-
-https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN_EXPERIMENTAL.md
-
 # Related Work
+
+<https://github.com/dannyblueliu/YOLO-Face-detection>
 
 <https://github.com/oarriaga/face_classification>
 
-<https://gist.github.com/GilLevi/54aee1b8b0397721aa4b>
-
-<https://www.openu.ac.il/home/hassner/projects/cnn_agegender/>
-
-<https://github.com/dpressel/rude-carnie>
-
-<https://how-old.net/>

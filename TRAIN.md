@@ -26,7 +26,7 @@ Create datase/fddb/FDDB-folds/annotations_darknet folder for darknet.
 
 Preview converted annotations.
 
-`perl annotation_view.pl fddb`
+`python annotation_view.py fddb`
 
 [![FDDB dataset overview](https://img.youtube.com/vi/KGeY_PFhRYA/0.jpg)](https://www.youtube.com/watch?v=KGeY_PFhRYA&feature=youtu.be)
 
@@ -99,7 +99,3 @@ Test classifier task using keras.
 `python agegender_predict.py age miniXception`
 
 `python agegender_predict.py gender simple_cnn`
-
-Demo classifier task using keras and yolo.
-
-`python agegender_demo.py keras`
