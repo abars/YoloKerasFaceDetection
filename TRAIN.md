@@ -49,6 +49,7 @@ Here is a test.
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/yolov2-tiny-train-one-class_32600.jpg" width="50%" height="50%">
 
 <http://www.abars.biz/keras/yolov2-tiny-one-class.cfg>
+
 <http://www.abars.biz/keras/yolov2-tiny-train-one-class_32600.weights>
 
 ## Convert to Keras Model
