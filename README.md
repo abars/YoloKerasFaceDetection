@@ -17,11 +17,11 @@ Age and Gender Classification
 
 Keras2 (Tensorflow backend)
 
-Darknet
-
 OpenCV
 
 Python 2.7
+
+Darknet (for Training)
 
 Perl (for Training)
 

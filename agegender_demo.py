@@ -287,9 +287,6 @@ def show_results(img,results, img_width, img_height, model_age, model_gender, mo
 		img_keras = np.expand_dims(img_keras, axis=0)
 		img_keras = img_keras / 255.0
 
-		caffe_final_layer="prob"
-		gender_revert=True
-
 		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
 
