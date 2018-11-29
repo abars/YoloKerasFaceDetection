@@ -23,7 +23,7 @@ def view(MODE):
 		file = file.replace('\n','')
 		file = file.replace('\r','')
 
-		path="darknet/"+file
+		path="dataset/"+file
 		target_image = cv2.imread(path)
 		path=path.replace(".jpg",".txt")
 		path=path.replace(".png",".txt")
