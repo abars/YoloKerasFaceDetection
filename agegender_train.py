@@ -384,8 +384,8 @@ def plot_history_loss(fit):
 # acc
 def plot_history_acc(fit):
     # Plot the loss in the history
-    axR.plot(fit.history['acc'],label="loss for training")
-    axR.plot(fit.history['val_acc'],label="loss for validation")
+    axR.plot(fit.history['acc'],label="accuracy for training")
+    axR.plot(fit.history['val_acc'],label="accuracy for validation")
     axR.set_title('model accuracy')
     axR.set_xlabel('epoch')
     axR.set_ylabel('accuracy')
