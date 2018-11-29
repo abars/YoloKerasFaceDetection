@@ -87,7 +87,7 @@ def interpret_output_yolov2(output, img_width, img_height):
 	anchors=[0.57273, 0.677385, 1.87446, 2.06253, 3.33843, 5.47434, 7.88282, 3.52778, 9.77052, 9.16828]
 
 	netout=output
-	nb_class=80
+	nb_class=1
 	obj_threshold=0.4
 	nms_threshold=0.3
 
@@ -324,9 +324,9 @@ def main(argv):
 	MODEL_ROOT_PATH="./pretrain/"
 
 	#Load Model
-	model_face = load_model(MODEL_ROOT_PATH+'yolov2_face.h5')
-	model_age = load_model(MODEL_ROOT_PATH+'agegender_age_miniXception.hdf5')
-	model_gender = load_model(MODEL_ROOT_PATH+'agegender_gender_simple_cnn.hdf5')
+	model_face = load_model(MODEL_ROOT_PATH+'yolov2_tiny-face.h5')
+	model_age = load_model(MODEL_ROOT_PATH+'agegender_age_miniXception_imdb.hdf5')
+	model_gender = load_model(MODEL_ROOT_PATH+'agegender_gender_simple_cnn_imdb.hdf5')
 	if(os.path.exists(MODEL_ROOT_PATH+'fer2013_mini_XCEPTION.102-0.66.hdf5')):
 		model_emotion = load_model(MODEL_ROOT_PATH+'fer2013_mini_XCEPTION.102-0.66.hdf5')
 	else:

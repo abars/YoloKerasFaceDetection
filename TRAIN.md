@@ -34,17 +34,19 @@ Preview converted annotations.
 
 Here is a training using YoloV2.
 
-Download initial weight file yolov2-tiny.weights and put in the same folder. (Important)
-
 `cd darknet`
 
-`./darknet detector train data/face.data cfg/yolov2-tiny-train.cfg yolov2-tiny.weights`
+`./darknet detector train data/face-one-class.data cfg/yolov2-tiny-train-one-class.cfg`
 
 ## Test using Darknet
 
 Here is a test.
 
-`./darknet detector demo data/face.data cfg/yolov2-tiny.cfg backup-face/yolov2-tiny-train_413600.weights -c 0`
+`./darknet detector demo data/face-one-class.data cfg/yolov2-tiny-train-one-class.cfg backup-face/yolov2-tiny-train-one-class_32600.weights -c 0`
+
+## Training Result
+
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/yolov2-tiny-train-one-class_32600.jpg" width="50%" height="50%">
 
 ## Convert to Keras Model
 

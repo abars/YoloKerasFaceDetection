@@ -1,0 +1,7 @@
+classes= 1
+train  = ../dataset/fddb/FDDB-folds/annotations_darknet/train.txt
+valid  = ../dataset/fddb/FDDB-folds/annotations_darknet/test.txt
+#difficult = data/difficult_2007_test.txt
+names = data/coco.names
+backup = c:\\deeplearning\\backup
+
