@@ -48,6 +48,9 @@ Here is a test.
 
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/yolov2-tiny-train-one-class_32600.jpg" width="50%" height="50%">
 
+<http://www.abars.biz/keras/yolov2-tiny-one-class.cfg>
+<http://www.abars.biz/keras/yolov2-tiny-train-one-class_32600.weights>
+
 ## Convert to Keras Model
 
 Download YAD2K
@@ -56,7 +59,11 @@ https://github.com/allanzelener/YAD2K
 
 This is a convert script.
 
-`python3 yad2k.py yolov2-tiny.cfg yolov2-tiny.weights yolov2-face.h5`
+`python3 yad2k.py yolov2-tiny-train-one-class.cfg yolov2-tiny-train-one-class_32600.weights yolov2_tiny-face.h5`
+
+This is a converted model.
+
+<http://www.abars.biz/keras/yolov2_tiny-face.h5>
 
 # Age and Gender classification
 
