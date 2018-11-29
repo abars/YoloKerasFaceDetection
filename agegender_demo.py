@@ -220,10 +220,27 @@ def _softmax(x, axis=-1, t=-100.):
 	
 	return e_x / e_x.sum(axis, keepdims=True)
 
+#crop
+def crop(x,y,w,h,margin,img_width,img_height):
+	xmin = int(x-w*margin)
+	xmax = int(x+w*margin)
+	ymin = int(y-h*margin)
+	ymax = int(y+h*margin)
+	if xmin<0:
+		xmin = 0
+	if ymin<0:
+		ymin = 0
+	if xmax>img_width:
+		xmax = img_width
+	if ymax>img_height:
+		ymax = img_height
+	return xmin,xmax,ymin,ymax
+
 #display result
 def show_results(img,results, img_width, img_height, model_age, model_gender, model_emotion):
 	img_cp = img.copy()
 	for i in range(len(results)):
+		#display detected face
 		x = int(results[i][1])
 		y = int(results[i][2])
 		w = int(results[i][3])//2
@@ -234,60 +251,24 @@ def show_results(img,results, img_width, img_height, model_age, model_gender, mo
 		else:
 			h=w
 
-		xmin = x-w
-		xmax = x+w
-		ymin = y-h
-		ymax = y+h
-		if xmin<0:
-			xmin = 0
-		if ymin<0:
-			ymin = 0
-		if xmax>img_width:
-			xmax = img_width
-		if ymax>img_height:
-			ymax = img_height
+		xmin,xmax,ymin,ymax=crop(x,y,w,h,1.0,img_width,img_height)
 
 		cv2.rectangle(img_cp,(xmin,ymin),(xmax,ymax),(0,255,0),2)
 		cv2.rectangle(img_cp,(xmin,ymin-20),(xmax,ymin),(125,125,125),-1)
-		cv2.putText(img_cp,results[i][0] + ' : %.2f' % results[i][5],(xmin+5,ymin-7),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,0),1)	
+		cv2.putText(img_cp,results[i][0] + ' : %.2f' % results[i][5],(xmin+5,ymin-7),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0,0,0),1)
 
 		target_image=img_cp
 
-		x2=xmin
-		y2=ymin
-		w2=w*2
-		h2=h*2
+		#analyze detected face
+		xmin2,xmax2,ymin2,ymax2=crop(x,y,w,h,1.2,img_width,img_height)
 
-		face_image = img[y2:y2+h2, x2:x2+w2]
+		face_image = img[ymin2:ymax2, xmin2:xmax2]
 
 		if(face_image.shape[0]<=0 or face_image.shape[1]<=0):
 			continue
 
-		IMAGE_SIZE=227
-		IMAGE_SIZE_KERAS=64
+		cv2.rectangle(target_image, (xmin2,ymin2), (xmax2,ymax2), color=(0,0,255), thickness=3)
 
-		img = cv2.resize(face_image, (IMAGE_SIZE,IMAGE_SIZE))
-		img = np.expand_dims(img, axis=0)
-		img = img - (104,117,123) #BGR mean value of VGG16
-		img = img.transpose((0, 3, 1, 2))
-
-		img_fer2013 = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
-		img_fer2013 = cv2.cvtColor(img_fer2013,cv2.COLOR_BGR2GRAY)
-		img_fer2013 = np.expand_dims(img_fer2013, axis=0)
-		img_fer2013 = np.expand_dims(img_fer2013, axis=3)
-		img_fer2013 = img_fer2013 / 255.0 *2 -1
-
-		img_gender = cv2.resize(face_image, (48,48))
-		img_gender = img_gender[::-1, :, ::-1].copy()	#BGR to RGB
-		img_gender = np.expand_dims(img_gender, axis=0)
-		img_gender = img_gender / 255.0
-
-		img_keras = cv2.resize(face_image, (IMAGE_SIZE_KERAS,IMAGE_SIZE_KERAS))
-		img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
-		img_keras = np.expand_dims(img_keras, axis=0)
-		img_keras = img_keras / 255.0
-
-		cv2.rectangle(target_image, (x2,y2), (x2+w2,y2+h2), color=(0,0,255), thickness=3)
 		offset=16
 
 		lines_age=open('words/agegender_age_words.txt').readlines()
@@ -295,27 +276,48 @@ def show_results(img,results, img_width, img_height, model_age, model_gender, mo
 		lines_fer2013=open('words/emotion_words.txt').readlines()
 
 		if(model_age!=None):
+			shape = model_age.layers[0].get_output_at(0).get_shape().as_list()
+			img_keras = cv2.resize(face_image, (shape[1],shape[2]))
+			img_keras = img_keras[::-1, :, ::-1].copy()	#BGR to RGB
+			img_keras = np.expand_dims(img_keras, axis=0)
+			img_keras = img_keras / 255.0
+
 			pred_age_keras = model_age.predict(img_keras)[0]
 			prob_age_keras = np.max(pred_age_keras)
 			cls_age_keras = pred_age_keras.argmax()
-			cv2.putText(target_image, "Keras : %.2f" % prob_age_keras + " " + lines_age[cls_age_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			cv2.putText(target_image, "Age : %.2f" % prob_age_keras + " " + lines_age[cls_age_keras], (xmin2,ymax2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
 		if(model_gender!=None):
+			shape = model_gender.layers[0].get_output_at(0).get_shape().as_list()
+
+			img_gender = cv2.resize(face_image, (shape[1],shape[2]))
+			img_gender = img_gender[::-1, :, ::-1].copy()	#BGR to RGB
+			img_gender = np.expand_dims(img_gender, axis=0)
+			img_gender = img_gender / 255.0
+
 			pred_gender_keras = model_gender.predict(img_gender)[0]
 			prob_gender_keras = np.max(pred_gender_keras)
 			cls_gender_keras = pred_gender_keras.argmax()
-			cv2.putText(target_image, "Keras : %.2f" % prob_gender_keras + " " + lines_gender[cls_gender_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			cv2.putText(target_image, "Gender : %.2f" % prob_gender_keras + " " + lines_gender[cls_gender_keras], (xmin2,ymax2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
 		if(model_emotion!=None):
+			shape = model_emotion.layers[0].get_output_at(0).get_shape().as_list()
+
+			img_fer2013 = cv2.resize(face_image, (shape[1],shape[2]))
+			img_fer2013 = cv2.cvtColor(img_fer2013,cv2.COLOR_BGR2GRAY)
+			img_fer2013 = np.expand_dims(img_fer2013, axis=0)
+			img_fer2013 = np.expand_dims(img_fer2013, axis=3)
+			img_fer2013 = img_fer2013 / 255.0 *2 -1
+
 			pred_emotion_keras = model_emotion.predict(img_fer2013)[0]
 			prob_emotion_keras = np.max(pred_emotion_keras)
 			cls_emotion_keras = pred_emotion_keras.argmax()
-			cv2.putText(target_image, "Keras : %.2f" % prob_emotion_keras + " " + lines_fer2013[cls_emotion_keras], (x2,y2+h2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
+			cv2.putText(target_image, "Emotion : %.2f" % prob_emotion_keras + " " + lines_fer2013[cls_emotion_keras], (xmin2,ymax2+offset), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0,0,250));
 			offset=offset+16
 
-	cv2.imshow('YoloKerasFace detection',img_cp)
+	cv2.imshow('YoloKerasFaceDetection',img_cp)
 	
 def main(argv):
 	MODEL_ROOT_PATH="./pretrain/"
@@ -329,10 +331,14 @@ def main(argv):
 	else:
 		model_emotion = None
 
+	#Prepare WebCamera
+	cap = cv2.VideoCapture(0)
+	cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+	cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
 	#Detection
 	while True:
 		#Face Detection
-		cap = cv2.VideoCapture(0)
 		ret, frame = cap.read() #BGR
 		img=frame
 		img = img[...,::-1]  #BGR 2 RGB
