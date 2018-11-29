@@ -80,6 +80,20 @@ Create dataset/agegender/annotations for keras.
 
 `python annotation_imdb_keras.py`
 
+Note : The age labels in the IMDB-WIKI dataset are noisy.
+
+https://github.com/yu4u/age-gender-estimation/issues/15
+
+### Use UTKFace dataset
+
+Download UTKFace dataset and put in the dataset/imdb_crop folder.
+
+https://susanqq.github.io/UTKFace/
+
+Create dataset/agegender/annotations for keras.
+
+`python annotation_utkface_keras.py`
+
 ## Train using Keras
 
 Run classifier task using keras.
