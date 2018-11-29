@@ -6,9 +6,6 @@ import os.path,sys
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
-#import plaidml.keras
-#plaidml.keras.install_backend()
-
 from keras.layers.convolutional import Convolution2D, Conv2D
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.core import Activation
@@ -22,6 +19,7 @@ from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D,AveragePooling2D,Input
 from keras.layers import SeparableConv2D
 from keras.applications.vgg16 import VGG16
+from keras.applications.mobilenet import MobileNet
 from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing.image import ImageDataGenerator
 from keras.regularizers import l2
@@ -45,6 +43,7 @@ ANNOTATIONS='gender'
 MODELS="simple_cnn"
 #MODELS="miniXception"
 #MODELS="squeezenet"
+#MODELS="mobilenet"
 
 DATASET_ROOT_PATH=""
 #DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
@@ -59,14 +58,14 @@ if len(sys.argv) >= 3:
   if len(sys.argv) >= 4:
     DATASET_ROOT_PATH=sys.argv[3]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet/mobilenet] [datasetroot(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
   print("unknown annotation mode");
   sys.exit(1)
 
-if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception" and MODELS!="squeezenet":
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception" and MODELS!="squeezenet" and MODELS!="mobilenet":
   print("unknown network mode");
   sys.exit(1)
 
@@ -291,11 +290,26 @@ elif(MODELS=='squeezenet'):
   sys.path.append('../keras-squeezenet-master')
   from keras_squeezenet import SqueezeNet
   input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
-  model = SqueezeNet(weights=None, classes=N_CATEGORIES, input_tensor=input_tensor)
+  base_model = SqueezeNet(weights="imagenet", include_top=False, input_tensor=input_tensor)
+  x = base_model.output
+  x = GlobalAveragePooling2D()(x)
+  x = Dense(1024, activation='relu')(x)
+  predictions = Dense(N_CATEGORIES, activation='softmax')(x)
+  model = Model(inputs=base_model.input, outputs=predictions)
+elif(MODELS=='mobilenet'):
+  IMAGE_SIZE=227
+  EPOCS = 50
+  input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
+  base_model = MobileNet(weights='imagenet', include_top=False,input_tensor=input_tensor)
+  x = base_model.output
+  x = GlobalAveragePooling2D()(x)
+  x = Dense(1024, activation='relu')(x)
+  predictions = Dense(N_CATEGORIES, activation='softmax')(x)
+  model = Model(inputs=base_model.input, outputs=predictions)
 else:
    raise Exception('invalid model name')
 
-if(MODELS=='vgg16'):
+if(MODELS=='vgg16' or MODELS=='squeezenet' or MODELS=='mobilenet'):
   #for fine tuning
   from keras.optimizers import SGD
   model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
@@ -310,24 +324,15 @@ model.summary()
 # Data
 # ----------------------------------------------
 
-#def preprocess_input(img):
-  #img = img[...,::-1]  #RGB2BGR
-  #img = img - (104,117,123) #BGR mean value of VGG16
-
-  #img = img - (123,117,104) #RGB mean value of VGG16
-  #return img
-
 train_datagen = ImageDataGenerator(
    rescale=1.0 / 255,
-   #preprocessing_function=preprocess_input,
    shear_range=0.2,
    zoom_range=0.2,
    horizontal_flip=True,
    rotation_range=10)
 
 test_datagen = ImageDataGenerator(
-   rescale=1.0 / 255,
-   #preprocessing_function=preprocess_input,
+   rescale=1.0 / 255
 )
 
 train_generator = train_datagen.flow_from_directory(
