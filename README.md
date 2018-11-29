@@ -49,3 +49,4 @@ https://github.com/abars/YoloKerasFaceDetection/blob/master/TRAIN.md
 
 <https://github.com/oarriaga/face_classification>
 
+<https://github.com/yu4u/age-gender-estimation>
