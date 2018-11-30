@@ -2,7 +2,7 @@
 
 Implement Face detection, and Age and Gender Classification using Keras.
 
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo/demo.jpg" width="50%" height="50%">
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/demo.jpg" width="50%" height="50%">
 (image from wider face dataset)
 
 # Overview
