@@ -46,7 +46,7 @@ Here is a test.
 
 ## Training Result
 
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/log/yolov2-tiny-train-one-class_32600.jpg" width="50%" height="50%">
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/yolov2-tiny-train-one-class_32600.jpg" width="50%" height="50%">
 
 <http://www.abars.biz/keras/yolov2-tiny-one-class.cfg>
 
@@ -126,13 +126,13 @@ Test classifier task using keras.
 
 ## Training result
 
-Age
+Age101 (IMDB)
 
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_age101_squeezenet.png" width="50%" height="50%">
 
 <http://www.abars.biz/keras/agegender_age101_squeezenet.hdf5>
 
-Gender
+Gender (IMDB)
 
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_gender_squeezenet.png" width="50%" height="50%">
 
