@@ -297,10 +297,10 @@ elif(MODELS=='squeezenet'):
   predictions = Dense(N_CATEGORIES, activation='softmax')(x)
   model = Model(inputs=base_model.input, outputs=predictions)
 elif(MODELS=='mobilenet'):
-  IMAGE_SIZE=227
+  IMAGE_SIZE=128
   EPOCS = 50
-  input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
-  base_model = MobileNet(weights='imagenet', include_top=False,input_tensor=input_tensor)
+  input_shape = (IMAGE_SIZE,IMAGE_SIZE,3)
+  base_model = MobileNet(weights='imagenet', include_top=False,input_shape=input_shape)
   x = base_model.output
   x = GlobalAveragePooling2D()(x)
   x = Dense(1024, activation='relu')(x)

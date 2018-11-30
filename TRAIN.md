@@ -106,20 +106,34 @@ Create dataset/agegender/annotations for keras.
 
 ## Train using Keras
 
+Install keras-squeezenet
+
+https://github.com/rcmalli/keras-squeezenet
+
 Run classifier task using keras.
 
-Network input is 64x64x3.
+`python agegender_train.py age101 squeezenet`
 
-`python agegender_train.py age miniXception`
-
-Network input is 48x48x3.
-
-`python agegender_train.py gender simple_cnn`
+`python agegender_train.py gender squeezenet`
 
 ## Test using Keras
 
 Test classifier task using keras.
 
-`python agegender_predict.py age miniXception`
+`python agegender_predict.py age101 squeezenet`
 
-`python agegender_predict.py gender simple_cnn`
+`python agegender_predict.py gender squeezenet`
+
+## Training result
+
+Age
+
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_age101_squeezenet.png" width="50%" height="50%">
+
+<http://www.abars.biz/keras/agegender_age101_squeezenet.hdf5>
+
+Gender
+
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_gender_squeezenet.png" width="50%" height="50%">
+
+<http://www.abars.biz/keras/agegender_gender_squeezenet.hdf5>
