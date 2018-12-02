@@ -3,6 +3,7 @@
 # ----------------------------------------------
 
 import os.path,sys
+import numpy as np
 
 os.environ['KERAS_BACKEND'] = 'tensorflow'
 
@@ -33,19 +34,11 @@ import matplotlib.pyplot as plt
 # MODE
 # ----------------------------------------------
 
-#ANNOTATIONS='agegender'
-ANNOTATIONS='gender'
-#ANNOTATIONS='age'
-
-#MODELS="inceptionv3"
-#MODELS="vgg16"
-#MODELS="small_cnn"
-MODELS="simple_cnn"
-#MODELS="miniXception"
-#MODELS="squeezenet"
-#MODELS="mobilenet"
-
+ANNOTATIONS=''
+MODELS=''
 DATASET_ROOT_PATH=""
+AUGUMENTATION_MODE=""
+
 #DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
 
 # ----------------------------------------------
@@ -57,28 +50,41 @@ if len(sys.argv) >= 3:
   MODELS = sys.argv[2]
   if len(sys.argv) >= 4:
     DATASET_ROOT_PATH=sys.argv[3]
+  if len(sys.argv) >= 5:
+    AUGUMENTATION_MODE=sys.argv[4]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/small_cnn/simple_cnn/miniXception/squeezenet/mobilenet] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/squeezenet/mobilenet] [datasetroot(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
   print("unknown annotation mode");
   sys.exit(1)
 
-if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="small_cnn" and MODELS!="simple_cnn" and MODELS!="miniXception" and MODELS!="squeezenet" and MODELS!="mobilenet":
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="squeezenet" and MODELS!="mobilenet":
   print("unknown network mode");
+  sys.exit(1)
+
+if AUGUMENTATION_MODE!="" and AUGUMENTATION_MODE!="augumented":
+  print("unknown augumentation mode");
   sys.exit(1)
 
 # ----------------------------------------------
 # Model
 # ----------------------------------------------
 
-NUM_TRAINING = 8634
-NUM_VALIDATION = 2889
+if AUGUMENTATION_MODE=="":
+  DATA_AUGUMENTATION=False
+else:
+  DATA_AUGUMENTATION=True
+
 BATCH_SIZE = 16
 
-PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.png'
-MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.hdf5'
+AUGUMENT=""
+if DATA_AUGUMENTATION:
+  AUGUMENT="augumented"
+
+PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+AUGUMENT+'.png'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+AUGUMENT+'.hdf5'
 
 #Size
 if ANNOTATIONS=='agegender':
@@ -121,168 +127,6 @@ elif(MODELS=='vgg16'):
    model = Model(inputs=base_model.input, outputs=predictions)
    for layer in base_model.layers[:15]:
       layer.trainable = False
-elif(MODELS=='small_cnn'):
-   IMAGE_SIZE = 32
-   EPOCS = 50
-   model = Sequential()
-   input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
-   model.add(InputLayer(input_shape=input_shape))
-   model.add(Convolution2D(96, 3, 3, border_mode='same'))
-   model.add(Activation('relu'))
-   model.add(Convolution2D(128, 3, 3))
-   model.add(Activation('relu'))
-   model.add(Dropout(0.5))
-   model.add(Flatten())
-   model.add(Dense(1024))
-   model.add(Activation('relu'))
-   model.add(Dropout(0.5))
-   model.add(Dense(N_CATEGORIES))
-   model.add(Activation('softmax',name='predictions'))
-elif(MODELS=='simple_cnn'):
-   IMAGE_SIZE = 48
-   EPOCS = 50
-   input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
-
-   model = Sequential()
-
-   model.add(InputLayer(input_shape=input_shape))
-
-   model.add(Convolution2D(filters=16, kernel_size=(7, 7), padding='same',
-                         name='image_array'))
-   model.add(BatchNormalization())
-   model.add(Convolution2D(filters=16, kernel_size=(7, 7), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Activation('relu'))
-   model.add(AveragePooling2D(pool_size=(2, 2), padding='same'))
-   model.add(Dropout(.5))
-
-   model.add(Convolution2D(filters=32, kernel_size=(5, 5), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Convolution2D(filters=32, kernel_size=(5, 5), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Activation('relu'))
-   model.add(AveragePooling2D(pool_size=(2, 2), padding='same'))
-   model.add(Dropout(.5))
-
-   model.add(Convolution2D(filters=64, kernel_size=(3, 3), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Convolution2D(filters=64, kernel_size=(3, 3), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Activation('relu'))
-   model.add(AveragePooling2D(pool_size=(2, 2), padding='same'))
-   model.add(Dropout(.5))
-
-   model.add(Convolution2D(filters=128, kernel_size=(3, 3), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Convolution2D(filters=128, kernel_size=(3, 3), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Activation('relu'))
-   model.add(AveragePooling2D(pool_size=(2, 2), padding='same'))
-   model.add(Dropout(.5))
-
-   model.add(Convolution2D(filters=256, kernel_size=(3, 3), padding='same'))
-   model.add(BatchNormalization())
-   model.add(Convolution2D(filters=N_CATEGORIES, kernel_size=(3, 3), padding='same'))
-   model.add(GlobalAveragePooling2D())
-   model.add(Activation('softmax',name='predictions'))
-elif(MODELS=='miniXception'):
-    IMAGE_SIZE = 64
-    EPOCS = 50
-    input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3)
-
-    l2_regularization=0.01
-    regularization = l2(l2_regularization)
-
-    # base
-    img_input = Input(input_shape)
-    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization,
-                                            use_bias=False)(img_input)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = Conv2D(8, (3, 3), strides=(1, 1), kernel_regularizer=regularization,
-                                            use_bias=False)(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-
-    # module 1
-    residual = Conv2D(16, (1, 1), strides=(2, 2),
-                      padding='same', use_bias=False)(x)
-    residual = BatchNormalization()(residual)
-
-    x = SeparableConv2D(16, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = SeparableConv2D(16, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-
-    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
-    x = layers.add([x, residual])
-
-    # module 2
-    residual = Conv2D(32, (1, 1), strides=(2, 2),
-                      padding='same', use_bias=False)(x)
-    residual = BatchNormalization()(residual)
-
-    x = SeparableConv2D(32, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = SeparableConv2D(32, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-
-    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
-    x = layers.add([x, residual])
-
-    # module 3
-    residual = Conv2D(64, (1, 1), strides=(2, 2),
-                      padding='same', use_bias=False)(x)
-    residual = BatchNormalization()(residual)
-
-    x = SeparableConv2D(64, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = SeparableConv2D(64, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-
-    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
-    x = layers.add([x, residual])
-
-    # module 4
-    residual = Conv2D(128, (1, 1), strides=(2, 2),
-                      padding='same', use_bias=False)(x)
-    residual = BatchNormalization()(residual)
-
-    x = SeparableConv2D(128, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-    x = SeparableConv2D(128, (3, 3), padding='same',
-                        kernel_regularizer=regularization,
-                        use_bias=False)(x)
-    x = BatchNormalization()(x)
-
-    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
-    x = layers.add([x, residual])
-
-    x = Conv2D(N_CATEGORIES, (3, 3),
-            #kernel_regularizer=regularization,
-            padding='same')(x)
-    x = GlobalAveragePooling2D()(x)
-    output = Activation('softmax',name='predictions')(x)
-
-    model = Model(img_input, output)
 elif(MODELS=='squeezenet'):
   IMAGE_SIZE=227
   EPOCS = 50
@@ -309,7 +153,7 @@ elif(MODELS=='mobilenet'):
 else:
    raise Exception('invalid model name')
 
-if(MODELS=='vgg16' or MODELS=='squeezenet' or MODELS=='mobilenet'):
+if(MODELS=='inceptionv3' or MODELS=='vgg16' or MODELS=='squeezenet' or MODELS=='mobilenet'):
   #for fine tuning
   from keras.optimizers import SGD
   model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
@@ -321,15 +165,52 @@ else:
 model.summary()
 
 # ----------------------------------------------
+# Data Augumentation
+# ----------------------------------------------
+
+# reference from https://github.com/yu4u/age-gender-estimation/blob/master/random_eraser.py
+# https://github.com/yu4u/age-gender-estimation/blob/master/LICENSE
+def get_random_eraser(p=0.5, s_l=0.02, s_h=0.4, r_1=0.3, r_2=1/0.3, v_l=0, v_h=255):
+    def eraser(input_img):
+        img_h, img_w, _ = input_img.shape
+        p_1 = np.random.rand()
+
+        if p_1 > p:
+            return input_img
+
+        while True:
+            s = np.random.uniform(s_l, s_h) * img_h * img_w
+            r = np.random.uniform(r_1, r_2)
+            w = int(np.sqrt(s / r))
+            h = int(np.sqrt(s * r))
+            left = np.random.randint(0, img_w)
+            top = np.random.randint(0, img_h)
+
+            if left + w <= img_w and top + h <= img_h:
+                break
+
+        c = np.random.uniform(v_l, v_h)
+        input_img[top:top + h, left:left + w, :] = c
+
+        return input_img
+    return eraser
+
+# ----------------------------------------------
 # Data
 # ----------------------------------------------
+
+preprocessing_function=None
+if DATA_AUGUMENTATION:
+  preprocessing_function=get_random_eraser(v_l=0, v_h=255)
 
 train_datagen = ImageDataGenerator(
    rescale=1.0 / 255,
    shear_range=0.2,
    zoom_range=0.2,
    horizontal_flip=True,
-   rotation_range=10)
+   rotation_range=10,
+   preprocessing_function=preprocessing_function
+)
 
 test_datagen = ImageDataGenerator(
    rescale=1.0 / 255
@@ -356,12 +237,10 @@ validation_generator = test_datagen.flow_from_directory(
 # ----------------------------------------------
 
 fit = model.fit_generator(train_generator,
-   steps_per_epoch=NUM_TRAINING//BATCH_SIZE,
    epochs=EPOCS,
    verbose=1,
    validation_data=validation_generator,
-   validation_steps=NUM_VALIDATION//BATCH_SIZE,
-   )
+)
 
 model.save(MODEL_HDF5)
 
