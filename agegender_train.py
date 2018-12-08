@@ -77,7 +77,8 @@ if AUGUMENTATION_MODE=="":
 else:
   DATA_AUGUMENTATION=True
 
-BATCH_SIZE = 16
+BATCH_SIZE = 32
+EPOCS = 25
 
 AUGUMENT=""
 if DATA_AUGUMENTATION:
@@ -99,7 +100,6 @@ if ANNOTATIONS=='age101':
 #model
 if(MODELS=='inceptionv3'):
    IMAGE_SIZE = 299
-   EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
    base_model = InceptionV3(weights='imagenet', include_top=False,input_tensor=input_tensor)
 
@@ -117,7 +117,6 @@ if(MODELS=='inceptionv3'):
       layer.trainable = True
 elif(MODELS=='vgg16'):
    IMAGE_SIZE = 224
-   EPOCS = 50
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
    base_model = VGG16(weights='imagenet', include_top=False,input_tensor=input_tensor)
    x = base_model.output
@@ -129,7 +128,6 @@ elif(MODELS=='vgg16'):
       layer.trainable = False
 elif(MODELS=='squeezenet'):
   IMAGE_SIZE=227
-  EPOCS = 50
   import sys
   sys.path.append('../keras-squeezenet-master')
   from keras_squeezenet import SqueezeNet
@@ -142,7 +140,6 @@ elif(MODELS=='squeezenet'):
   model = Model(inputs=base_model.input, outputs=predictions)
 elif(MODELS=='mobilenet'):
   IMAGE_SIZE=128
-  EPOCS = 50
   input_shape = (IMAGE_SIZE,IMAGE_SIZE,3)
   base_model = MobileNet(weights='imagenet', include_top=False,input_shape=input_shape)
   x = base_model.output
