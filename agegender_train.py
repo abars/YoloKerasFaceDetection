@@ -78,14 +78,18 @@ else:
   DATA_AUGUMENTATION=True
 
 BATCH_SIZE = 32
-EPOCS = 25
+
+if ANNOTATIONS=='age101':
+  EPOCS = 100
+else:
+  EPOCS = 25
 
 AUGUMENT=""
 if DATA_AUGUMENTATION:
-  AUGUMENT="augumented"
+  AUGUMENT="_augumented"
 
-PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+AUGUMENT+'.png'
-MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+AUGUMENT+'.hdf5'
+PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+''+AUGUMENT+'.png'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+''+AUGUMENT+'.hdf5'
 
 #Size
 if ANNOTATIONS=='agegender':
