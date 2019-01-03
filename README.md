@@ -111,13 +111,13 @@ This is a converted model.
 
 #### Use AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset
 
-Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset (agegender folder)  and put in the dataset/agegender folder.
+Download AdienceBenchmarkOfUnfilteredFacesForGenderAndAgeClassification dataset and put in the dataset/adience folder.
 
 https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
 
-Create dataset/agegender/annotations for keras.
+Create dataset/agegender_adience/annotations for keras.
 
-`perl annotation_agegender_keras.pl`
+`perl annotation_agegender_adience_keras.pl`
 
 #### Use IMDB-WIKI dataset
 
@@ -125,13 +125,9 @@ Download IMDB-WIKI dataset (Download faces only 7gb) and put in the dataset/imdb
 
 https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/
 
-Create dataset/agegender/annotations for keras.
+Create dataset/agegender_imdb/annotations for keras.
 
 `python annotation_imdb_keras.py`
-
-Note : The age labels in the IMDB-WIKI dataset are noisy.
-
-https://github.com/yu4u/age-gender-estimation/issues/15
 
 #### Use UTKFace dataset
 
@@ -139,9 +135,19 @@ Download UTKFace dataset and put in the dataset/imdb_crop folder.
 
 https://susanqq.github.io/UTKFace/
 
-Create dataset/agegender/annotations for keras.
+Create dataset/agegender_utk/annotations for keras.
 
 `python annotation_utkface_keras.py`
+
+#### Use AppaReal dataset
+
+Download AppaReal dataset and put in the dataset/appa-real-release folder.
+
+http://chalearnlap.cvc.uab.es/dataset/26/description/
+
+Create dataset/agegender_appareal/annotations for keras.
+
+`python annotation_appareal_keras.py`
 
 ### Train using Keras
 
@@ -151,9 +157,9 @@ https://github.com/rcmalli/keras-squeezenet
 
 Run classifier task using keras.
 
-`python agegender_train.py age101 squeezenet`
+`python agegender_train.py age101 squeezenet imdb`
 
-`python agegender_train.py gender squeezenet`
+`python agegender_train.py gender squeezenet imdb`
 
 ### Test using Keras
 

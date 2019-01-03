@@ -14,7 +14,7 @@ if(os.path.exists("./dataset/UTKFace/")):
 else:
 	DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
 
-OUTPUT_LABEL="agegender"
+OUTPUT_LABEL="agegender_utk"
 
 UTKFACE_PATH=DATASET_ROOT_PATH+"dataset/UTKFace/"
 GENDER_PATH=DATASET_ROOT_PATH+"dataset/"+OUTPUT_LABEL+"/annotations/gender/"

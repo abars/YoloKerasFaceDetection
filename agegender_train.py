@@ -36,6 +36,7 @@ import matplotlib.pyplot as plt
 
 ANNOTATIONS=''
 MODELS=''
+DATASET_NAME=''
 DATASET_ROOT_PATH=""
 AUGUMENTATION_MODE=""
 
@@ -45,23 +46,28 @@ AUGUMENTATION_MODE=""
 # Argument
 # ----------------------------------------------
 
-if len(sys.argv) >= 3:
+if len(sys.argv) >= 4:
   ANNOTATIONS = sys.argv[1]
   MODELS = sys.argv[2]
-  if len(sys.argv) >= 4:
-    DATASET_ROOT_PATH=sys.argv[3]
+  DATASET_NAME = sys.argv[3]
   if len(sys.argv) >= 5:
-    AUGUMENTATION_MODE=sys.argv[4]
+    DATASET_ROOT_PATH=sys.argv[4]
+  if len(sys.argv) >= 6:
+    AUGUMENTATION_MODE=sys.argv[5]
 else:
-  print("usage: python agegender_train.py [agegender/gender/age/age101] [inceptionv3/vgg16/squeezenet/mobilenet] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [gender/age/age101] [inceptionv3/vgg16/squeezenet/mobilenet] [adience/imdb/utk/appareal/vggface2] [datasetroot(optional)]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
+if ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
   print("unknown annotation mode");
   sys.exit(1)
 
 if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="squeezenet" and MODELS!="mobilenet":
   print("unknown network mode");
+  sys.exit(1)
+
+if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and DATASET_NAME!="appareal" and DATASET_NAME!="vggface2":
+  print("unknown dataset name");
   sys.exit(1)
 
 if AUGUMENTATION_MODE!="" and AUGUMENTATION_MODE!="augumented":
@@ -88,12 +94,10 @@ AUGUMENT=""
 if DATA_AUGUMENTATION:
   AUGUMENT="_augumented"
 
-PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+''+AUGUMENT+'.png'
-MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+''+AUGUMENT+'.hdf5'
+PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+AUGUMENT+'.png'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+AUGUMENT+'.hdf5'
 
 #Size
-if ANNOTATIONS=='agegender':
-  N_CATEGORIES = 16
 if ANNOTATIONS=='age':
   N_CATEGORIES=8
 if ANNOTATIONS=='gender':
@@ -218,7 +222,7 @@ test_datagen = ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-   DATASET_ROOT_PATH+'dataset/agegender/annotations/'+ANNOTATIONS+'/train',
+   DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/train',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -226,7 +230,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = test_datagen.flow_from_directory(
-   DATASET_ROOT_PATH+'dataset/agegender/annotations/'+ANNOTATIONS+'/validation',
+   DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/validation',
    target_size=(IMAGE_SIZE, IMAGE_SIZE),
    batch_size=BATCH_SIZE,
    class_mode='categorical',
@@ -237,10 +241,24 @@ validation_generator = test_datagen.flow_from_directory(
 # Train
 # ----------------------------------------------
 
+training_data_n = len(train_generator.filenames)
+validation_data_n = len(validation_generator.filenames)
+
+print "Training data count : "+str(training_data_n)
+print "Validation data count : "+str(validation_data_n)
+
+if DATASET_NAME!="imdb":
+  DATA_AUGUMENTATION_COUNT=100000
+  if training_data_n<DATA_AUGUMENTATION_COUNT:
+    training_data_n=DATA_AUGUMENTATION_COUNT  # Data augumentation
+    print "Training data augumented count : "+str(training_data_n)
+
 fit = model.fit_generator(train_generator,
    epochs=EPOCS,
    verbose=1,
    validation_data=validation_generator,
+   steps_per_epoch=training_data_n//BATCH_SIZE,
+   validation_steps=validation_data_n//BATCH_SIZE
 )
 
 model.save(MODEL_HDF5)

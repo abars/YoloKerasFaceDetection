@@ -13,7 +13,7 @@ if(os.path.exists("./dataset/imdb_crop/")):
 else:
 	DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
 
-OUTPUT_LABEL="agegender"
+OUTPUT_LABEL="agegender_imdb"
 
 IMDB_PATH=DATASET_ROOT_PATH+"dataset/imdb_crop/"
 GENDER_PATH=DATASET_ROOT_PATH+"dataset/"+OUTPUT_LABEL+"/annotations/gender/"

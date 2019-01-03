@@ -6,10 +6,11 @@ use strict;
 use Image::Size;
 use File::Copy;
 
-my $dataset_path="dataset/agegender/";
+my $input_path="dataset/adience/";
+my $dataset_path="dataset/agegender_adience/";
 
-my $ANNOTATION_FILES="./$dataset_path"."fold_";
-my $FACE_FILES="./$dataset_path"."aligned";
+my $ANNOTATION_FILES="./$input_path"."fold_";
+my $FACE_FILES="./$input_path"."aligned";
 
 mkdir "$dataset_path"."annotations/agegender/";
 mkdir "$dataset_path"."annotations/agegender/validation";

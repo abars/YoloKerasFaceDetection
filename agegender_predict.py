@@ -18,6 +18,7 @@ from keras.models import load_model
 # ----------------------------------------------
 
 ANNOTATIONS=''
+DATASET_NAME=''
 MODELS=""
 DATASET_ROOT_PATH=""
 DATA_AUGUMENTATION=False
@@ -32,18 +33,29 @@ if len(sys.argv) >= 3:
   ANNOTATIONS = sys.argv[1]
   MODELS = sys.argv[2]
   if len(sys.argv) >= 4:
-    DATASET_ROOT_PATH=sys.argv[3]
+    DATASET_NAME=sys.argv[3]
+  if len(sys.argv) >= 5:
+    DATASET_ROOT_PATH=sys.argv[4]
 else:
-  print("usage: python agegender_predict.py [agegender/gender/age/age101/emotion] [inceptionv3/vgg16/squeezenet/octavio] [datasetroot(optional)]")
+  print("usage: python agegender_predict.py [gender/age/age101/emotion] [inceptionv3/vgg16/squeezenet/octavio] [adience/imdb/utk/appareal/vggface2/empty] [datasetroot(optional)]")
   sys.exit(1)
 
-if ANNOTATIONS!="agegender" and ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101" and ANNOTATIONS!="emotion":
+if ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101" and ANNOTATIONS!="emotion":
   print("unknown annotation mode");
   sys.exit(1)
 
 if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="squeezenet" and MODELS!="mobilenet" and MODELS!="octavio":
   print("unknown network mode");
   sys.exit(1)
+
+if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and DATASET_NAME!="appareal" and DATASET_NAME!="vggface2" and DATASET_NAME!="empty":
+  print("unknown dataset name");
+  sys.exit(1)
+
+if DATASET_NAME=="empty":
+	DATASET_NAME=""
+else:
+	DATASET_NAME='_'+DATASET_NAME
 
 # ----------------------------------------------
 # converting
@@ -53,7 +65,7 @@ AUGUMENT=""
 if(DATA_AUGUMENTATION):
   AUGUMENT="augumented"
 
-MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+AUGUMENT+'.hdf5'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+DATASET_NAME+AUGUMENT+'.hdf5'
 ANNOTATION_WORDS='words/agegender_'+ANNOTATIONS+'_words.txt'
 
 if(ANNOTATIONS=="emotion"):
@@ -75,25 +87,47 @@ else:
 keras_model.summary()
 
 # ----------------------------------------------
+# convert to caffe model
+# ----------------------------------------------
+
+CONVERT_TO_CAFFEMODEL=False
+if CONVERT_TO_CAFFEMODEL:
+	import caffe
+	import keras2caffe
+	prototxt=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+DATASET_NAME+'.prototxt'
+	caffemodel=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+DATASET_NAME+'.caffemodel'
+	keras2caffe.convert(keras_model, prototxt, caffemodel)
+
+# ----------------------------------------------
 # test
 # ----------------------------------------------
 
+if(os.path.exists("./dataset/agegender_adience/")):
+	DATASET_PATH_ADIENCE=""
+else:
+	DATASET_PATH_ADIENCE="/Volumes/TB4/Keras/"
+
+if(os.path.exists("./dataset/agegender_imdb/")):
+	DATASET_PATH_IMDB=""
+else:
+	DATASET_PATH_IMDB="/Volumes/TB4/Keras/"
+
 image_list=[
-	'dataset/agegender/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg',
-	'dataset/agegender/annotations/agegender/validation/11_15-20_f/landmark_aligned_face.290.11594063605_713764ddeb_o.jpg',
-	'dataset/agegender/annotations/agegender/validation/3_15-20_m/landmark_aligned_face.291.11593667615_2cb80d1c2a_o.jpg',
-	'/Volumes/TB4/Keras/dataset/agegender/annotations/gender/train/f/26707.jpg',
-	'/Volumes/TB4/Keras/dataset/agegender/annotations/gender/train/f/26761.jpg',
-	'/Volumes/TB4/Keras/dataset/agegender/annotations/gender/train/m/181.jpg',
-	'/Volumes/TB4/Keras/dataset/agegender/annotations/gender/train/m/83.jpg'
+	DATASET_PATH_ADIENCE+'dataset/agegender_adience/annotations/agegender/validation/0_0-2_m/landmark_aligned_face.84.8277643357_43f107482d_o.jpg',
+	DATASET_PATH_ADIENCE+'dataset/agegender_adience/annotations/agegender/validation/11_15-20_f/landmark_aligned_face.290.11594063605_713764ddeb_o.jpg',
+	DATASET_PATH_ADIENCE+'dataset/agegender_adience/annotations/agegender/validation/3_15-20_m/landmark_aligned_face.291.11593667615_2cb80d1c2a_o.jpg',
+	DATASET_PATH_IMDB+'dataset/agegender_imdb/annotations/gender/train/f/26707.jpg',
+	DATASET_PATH_IMDB+'dataset/agegender_imdb/annotations/gender/train/f/26761.jpg',
+	DATASET_PATH_IMDB+'dataset/agegender_imdb/annotations/gender/train/m/181.jpg',
+	DATASET_PATH_IMDB+'dataset/agegender_imdb/annotations/gender/train/m/83.jpg'
 ]
 
 for image in image_list:
 	if not os.path.exists(image):
-		print image+" not found"
+		print(image+" not found")
 		continue
 
-	print image
+	print(image)
 	img = cv2.imread(image)
 
 	shape = keras_model.layers[0].get_output_at(0).get_shape().as_list()
@@ -120,23 +154,20 @@ for image in image_list:
 		lines=open(ANNOTATION_WORDS).readlines()
 
 	pred = keras_model.predict(data)[0]
-	print pred
+	print(pred)
 	prob = np.max(pred)
 	cls = pred.argmax()
-	print prob, cls, lines[cls]
+	print(prob, cls, lines[cls])
 
 # ----------------------------------------------
-# convert to caffe model
+# Test caffemodel
 # ----------------------------------------------
 
-#import keras2caffe
-#import caffe
-#keras2caffe.convert(keras_model, DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel')
-#net  = caffe.Net(DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.prototxt', DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'.caffemodel', caffe.TEST)
-#data = data.transpose((0, 3, 1, 2))
-#out = net.forward_all(data = data)
-#pred = out[net.outputs[0]]
-#prob = np.max(pred)
-#cls = pred.argmax()
-#print prob, cls, lines[cls]
-
+if CONVERT_TO_CAFFEMODEL:
+	net  = caffe.Net(prototxt, caffemodel, caffe.TEST)
+	data = data.transpose((0, 3, 1, 2))
+	out = net.forward_all(data = data)
+	pred = out[net.outputs[0]]
+	prob = np.max(pred)
+	cls = pred.argmax()
+	print(prob, cls, lines[cls])

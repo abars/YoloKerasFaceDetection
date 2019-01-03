@@ -8,12 +8,12 @@ import os
 import shutil
 import glob
 
-if(os.path.exists("./dataset/identity_meta_with_estimated_age.csv")):
+if(os.path.exists("./dataset/vggface2/identity_meta_with_estimated_age.csv")):
 	DATASET_ROOT_PATH=""
 else:
 	DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
 
-OUTPUT_LABEL="vggface2"
+OUTPUT_LABEL="agegender_vggface2"
 
 GENDER_PATH=DATASET_ROOT_PATH+"dataset/"+OUTPUT_LABEL+"/annotations/gender/"
 AGE101_PATH=DATASET_ROOT_PATH+"dataset/"+OUTPUT_LABEL+"/annotations/age101/"
@@ -40,7 +40,7 @@ if(not os.path.exists(AGE101_PATH)):
 		os.mkdir(AGE101_PATH+"train/"+format(i, '03d'))
 		os.mkdir(AGE101_PATH+"validation/"+format(i, '03d'))
 
-lines=open(DATASET_ROOT_PATH+"Dataset/identity_meta_with_estimated_age.csv").readlines()
+lines=open(DATASET_ROOT_PATH+"dataset/vggface2/identity_meta_with_estimated_age.csv").readlines()
 
 i=0
 
@@ -57,9 +57,9 @@ for line in lines:
 		train_or_validation="validation"
 
 	if trainset=="0":
-		path2=DATASET_ROOT_PATH+"Dataset/test/"+path
+		path2=DATASET_ROOT_PATH+"Dataset/vggface2/test/"+path
 	else:
-		path2=DATASET_ROOT_PATH+"Dataset/train/"+path
+		path2=DATASET_ROOT_PATH+"Dataset/vggface2/train/"+path
 
 	for image_path in glob.glob(path2+"/*.jpg"):
 		shutil.copyfile(image_path, GENDER_PATH+train_or_validation+"/"+gender+"/"+str(i)+".jpg")
