@@ -165,9 +165,9 @@ Run classifier task using keras.
 
 Test classifier task using keras.
 
-`python agegender_predict.py age101 squeezenet`
+`python agegender_predict.py age101 squeezenet imdb`
 
-`python agegender_predict.py gender squeezenet`
+`python agegender_predict.py gender squeezenet imdb`
 
 ### Training result
 
