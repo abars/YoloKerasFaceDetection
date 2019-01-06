@@ -126,7 +126,7 @@ if OPTIONAL_MODE=="benchmark":
 	   class_mode='categorical'
 	)
 
-	DISTRIBUTION_FILE=DATASET_ROOT_PATH+'pretrain/benchmark_'+ANNOTATIONS+"_"+MODELS+"_"+DATASET_NAME+'.png'
+	DISTRIBUTION_FILE=DATASET_ROOT_PATH+'pretrain/benchmark_'+ANNOTATIONS+"_"+MODELS+DATASET_NAME+'.png'
 
 	fig = plt.figure()
 	ax1 = fig.add_axes((0.1, 0.6, 0.8, 0.3))
@@ -140,9 +140,6 @@ if OPTIONAL_MODE=="benchmark":
 	x=np.zeros((max_cnt))
 	y=np.zeros((max_cnt))
 	t=np.zeros((max_cnt))
-
-	for key in disp_generator.class_indices.keys():
-		print(""+str(disp_generator.class_indices[key])+"/"+key)
 
 	cnt=0
 	heatmap=np.zeros((len(disp_generator.class_indices),len(disp_generator.class_indices)))
@@ -168,12 +165,13 @@ if OPTIONAL_MODE=="benchmark":
 			break
 
 	ax1.pcolor(heatmap, cmap=plt.cm.Blues)
-	for y in range(heatmap.shape[0]):
-		for x in range(heatmap.shape[1]):
-			ax1.text(x + 0.5, y + 0.5, '%.4f' % heatmap[y, x],
-				horizontalalignment='center',
-				verticalalignment='center',
-			)
+	if heatmap.shape[0]<=2:
+		for y in range(heatmap.shape[0]):
+			for x in range(heatmap.shape[1]):
+				ax1.text(x + 0.5, y + 0.5, '%.4f' % heatmap[y, x],
+					horizontalalignment='center',
+					verticalalignment='center',
+				)
 
 	ax1.set_title('ground truth vs predicted '+ANNOTATIONS)
 	ax1.set_xlabel(ANNOTATIONS+'(ground truth)')
