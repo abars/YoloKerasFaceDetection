@@ -248,10 +248,8 @@ print "Training data count : "+str(training_data_n)
 print "Validation data count : "+str(validation_data_n)
 
 if DATASET_NAME!="imdb":
-  DATA_AUGUMENTATION_COUNT=100000
-  if training_data_n<DATA_AUGUMENTATION_COUNT:
-    training_data_n=DATA_AUGUMENTATION_COUNT  # Data augumentation
-    print "Training data augumented count : "+str(training_data_n)
+  training_data_n=training_data_n*4  # Data augumentation
+  print "Training data augumented count : "+str(training_data_n)
 
 fit = model.fit_generator(train_generator,
    epochs=EPOCS,

@@ -21,6 +21,7 @@ ANNOTATIONS=''
 DATASET_NAME=''
 MODELS=""
 DATASET_ROOT_PATH=""
+CONVERT_TO_CAFFEMODEL=False
 DATA_AUGUMENTATION=False
 
 #DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
@@ -36,8 +37,10 @@ if len(sys.argv) >= 3:
     DATASET_NAME=sys.argv[3]
   if len(sys.argv) >= 5:
     DATASET_ROOT_PATH=sys.argv[4]
+  if len(sys.argv) >= 6:
+    CONVERT_TO_CAFFEMODEL=sys.argv[5]
 else:
-  print("usage: python agegender_predict.py [gender/age/age101/emotion] [inceptionv3/vgg16/squeezenet/octavio] [adience/imdb/utk/appareal/vggface2/empty] [datasetroot(optional)]")
+  print("usage: python agegender_predict.py [gender/age/age101/emotion] [inceptionv3/vgg16/squeezenet/octavio] [adience/imdb/utk/appareal/vggface2/empty] [datasetroot(optional)] [caffemodel(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101" and ANNOTATIONS!="emotion":
@@ -52,10 +55,19 @@ if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and 
   print("unknown dataset name");
   sys.exit(1)
 
+if CONVERT_TO_CAFFEMODEL!=False and CONVERT_TO_CAFFEMODEL!="caffemodel":
+  print("unknown caffemodel mode");
+  sys.exit(1)
+
 if DATASET_NAME=="empty":
 	DATASET_NAME=""
 else:
 	DATASET_NAME='_'+DATASET_NAME
+
+if CONVERT_TO_CAFFEMODEL=="caffemodel":
+	CONVERT_TO_CAFFEMODEL=True
+else:
+	CONVERT_TO_CAFFEMODEL=False
 
 # ----------------------------------------------
 # converting
@@ -90,8 +102,8 @@ keras_model.summary()
 # convert to caffe model
 # ----------------------------------------------
 
-CONVERT_TO_CAFFEMODEL=False
 if CONVERT_TO_CAFFEMODEL:
+	os.environ["GLOG_minloglevel"] = "2"
 	import caffe
 	import keras2caffe
 	prototxt=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+DATASET_NAME+'.prototxt'
@@ -154,20 +166,19 @@ for image in image_list:
 		lines=open(ANNOTATION_WORDS).readlines()
 
 	pred = keras_model.predict(data)[0]
-	print(pred)
 	prob = np.max(pred)
 	cls = pred.argmax()
-	print(prob, cls, lines[cls])
+	print("keras:",prob, cls, lines[cls])
 
 # ----------------------------------------------
 # Test caffemodel
 # ----------------------------------------------
 
-if CONVERT_TO_CAFFEMODEL:
-	net  = caffe.Net(prototxt, caffemodel, caffe.TEST)
-	data = data.transpose((0, 3, 1, 2))
-	out = net.forward_all(data = data)
-	pred = out[net.outputs[0]]
-	prob = np.max(pred)
-	cls = pred.argmax()
-	print(prob, cls, lines[cls])
+	if CONVERT_TO_CAFFEMODEL:
+		net  = caffe.Net(prototxt, caffemodel, caffe.TEST)
+		data = data.transpose((0, 3, 1, 2))
+		out = net.forward_all(data = data)
+		pred = out[net.outputs[0]]
+		prob = np.max(pred)
+		cls = pred.argmax()
+		print("caffe:",prob, cls, lines[cls])
