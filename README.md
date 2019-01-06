@@ -103,7 +103,7 @@ This is a convert script.
 
 This is a converted model.
 
-<http://www.abars.biz/keras/yolov2_tiny-face.h5>
+<https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/yolov2_tiny-face.h5>
 
 ## Age and Gender classification
 
@@ -171,17 +171,21 @@ Test classifier task using keras.
 
 ### Training result
 
-Age101 (IMDB)
+Age101 (IMDB) (EPOCHS=100)
 
-<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_age101_squeezenet.png" width="50%" height="50%">
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_age101_squeezenet_imdb.png" width="50%" height="50%">
 
-<http://www.abars.biz/keras/agegender_age101_squeezenet.hdf5>
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/benchmark_age101_squeezenet_imdb.png" width="50%" height="50%">
 
-Gender (IMDB)
+<https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/agegender_age101_squeezenet_imdb.hdf5>
+
+Gender (IMDB) (EPOCHS=25)
 
 <img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/agegender_gender_squeezenet.png" width="50%" height="50%">
 
-<http://www.abars.biz/keras/agegender_gender_squeezenet.hdf5>
+<img src="https://github.com/abars/YoloKerasFaceDetection/blob/master/pretrain/benchmark_gender_squeezenet_imdb.png" width="50%" height="50%">
+
+<https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/agegender_gender_squeezenet_imdb.hdf5>
 
 # Related Work
 

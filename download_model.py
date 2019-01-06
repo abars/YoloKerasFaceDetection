@@ -13,7 +13,7 @@ def main(argv):
 		os.mkdir(OUTPUT_PATH)
 	print("1/3");
 	with open(OUTPUT_PATH+'agegender_age101_squeezenet.hdf5','wb') as f:
-		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.0.0/agegender_age101_squeezenet.hdf5"
+		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/agegender_age101_squeezenet_imdb.hdf5"
 		if sys.version_info >= (3,0):
 			f.write(request.urlopen(path).read())
 		else:
@@ -21,7 +21,7 @@ def main(argv):
 		f.close()
 	print("2/3");
 	with open(OUTPUT_PATH+'agegender_gender_squeezenet.hdf5','wb') as f:
-		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.0.0/agegender_gender_squeezenet.hdf5"
+		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/agegender_gender_squeezenet_imdb.hdf5"
 		if sys.version_info >= (3,0):
 			f.write(request.urlopen(path).read())
 		else:
@@ -29,7 +29,7 @@ def main(argv):
 		f.close()
 	print("3/3");
 	with open(OUTPUT_PATH+'yolov2_tiny-face.h5','wb') as f:
-		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.0.0/yolov2_tiny-face.h5"
+		path="https://github.com/abars/YoloKerasFaceDetection/releases/download/1.10/yolov2_tiny-face.h5"
 		if sys.version_info >= (3,0):
 			f.write(request.urlopen(path).read())
 		else:
