@@ -23,8 +23,6 @@ Python 2.7
 
 Darknet (for Training)
 
-Perl (for Training)
-
 # Test
 
 ## Download Pretrained-Model
@@ -59,9 +57,9 @@ Download fddb dataset (FDDB-folds and originalPics folder) and put in the datase
 
 http://vis-www.cs.umass.edu/fddb/
 
-Create datase/fddb/FDDB-folds/annotations_darknet folder for darknet.
+Create dataset/fddb/FDDB-folds/annotations_darknet folder for darknet.
 
-`perl annotation_fddb_darknet.pl`
+`python annotation_fddb_darknet.py`
 
 Preview converted annotations.
 
@@ -117,7 +115,7 @@ https://www.openu.ac.il/home/hassner/Adience/data.html#agegender
 
 Create dataset/agegender_adience/annotations for keras.
 
-`perl annotation_agegender_adience_keras.pl`
+`python annotation_agegender_adience_keras.py`
 
 #### Use IMDB-WIKI dataset
 
