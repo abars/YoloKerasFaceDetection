@@ -11,7 +11,7 @@ import glob
 if(os.path.exists("./dataset/vggface2/identity_meta_with_estimated_age.csv")):
 	DATASET_ROOT_PATH=""
 else:
-	DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
+	DATASET_ROOT_PATH="/Volumes/ST5/keras/"
 
 OUTPUT_LABEL="agegender_vggface2"
 
@@ -51,10 +51,12 @@ for line in lines:
 	gender=obj[4]
 	age=int(obj[5].strip())
 
-	if trainset=="1:":
+	if trainset=="1":
 		train_or_validation="train"
 	else:
 		train_or_validation="validation"
+
+	print(line.strip(),train_or_validation)
 
 	if trainset=="0":
 		path2=DATASET_ROOT_PATH+"Dataset/vggface2/test/"+path
