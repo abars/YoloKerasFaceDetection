@@ -40,7 +40,7 @@ DATASET_NAME=''
 DATASET_ROOT_PATH=""
 AUGUMENTATION_MODE=""
 
-#DATASET_ROOT_PATH="/Volumes/TB4/Keras/"
+#DATASET_ROOT_PATH="/Volumes/ST5/keras/"
 
 # ----------------------------------------------
 # Argument
@@ -55,18 +55,18 @@ if len(sys.argv) >= 4:
   if len(sys.argv) >= 6:
     AUGUMENTATION_MODE=sys.argv[5]
 else:
-  print("usage: python agegender_train.py [gender/age/age101] [inceptionv3/vgg16/squeezenet/mobilenet] [adience/imdb/utk/appareal/vggface2] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [gender/age/age101] [inceptionv3/vgg16/squeezenet/squeezenet2/mobilenet] [adience/imdb/utk/appareal/vggface2/merged] [datasetroot(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
   print("unknown annotation mode");
   sys.exit(1)
 
-if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="squeezenet" and MODELS!="mobilenet":
+if MODELS!="inceptionv3" and MODELS!="vgg16" and MODELS!="squeezenet" and MODELS!="squeezenet2" and MODELS!="mobilenet":
   print("unknown network mode");
   sys.exit(1)
 
-if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and DATASET_NAME!="appareal" and DATASET_NAME!="vggface2":
+if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and DATASET_NAME!="appareal" and DATASET_NAME!="vggface2" and DATASET_NAME!="merged":
   print("unknown dataset name");
   sys.exit(1)
 
@@ -146,6 +146,20 @@ elif(MODELS=='squeezenet'):
   x = Dense(1024, activation='relu')(x)
   predictions = Dense(N_CATEGORIES, activation='softmax')(x)
   model = Model(inputs=base_model.input, outputs=predictions)
+elif(MODELS=='squeezenet2'):
+  IMAGE_SIZE=227
+  import sys
+  sys.path.append('../keras-squeezenet-master')
+  from keras_squeezenet import SqueezeNet
+  input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
+  base_model = SqueezeNet(weights="imagenet", include_top=False, input_tensor=input_tensor)
+  x = base_model.output
+  x = Dropout(0.5, name='drop9')(x)
+  x = Convolution2D(N_CATEGORIES, (1, 1), padding='valid', name='conv10')(x)
+  x = Activation('relu', name='relu_conv10')(x)
+  x = GlobalAveragePooling2D()(x)
+  predictions = Activation('softmax', name='loss')(x)
+  model = Model(inputs=base_model.input, outputs=predictions)
 elif(MODELS=='mobilenet'):
   IMAGE_SIZE=128
   input_shape = (IMAGE_SIZE,IMAGE_SIZE,3)
@@ -158,7 +172,7 @@ elif(MODELS=='mobilenet'):
 else:
    raise Exception('invalid model name')
 
-if(MODELS=='inceptionv3' or MODELS=='vgg16' or MODELS=='squeezenet' or MODELS=='mobilenet'):
+if(MODELS=='inceptionv3' or MODELS=='vgg16' or MODELS=='squeezenet' or MODELS=='squeezenet2' or MODELS=='mobilenet'):
   #for fine tuning
   from keras.optimizers import SGD
   model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy',metrics=['accuracy'])
@@ -244,12 +258,12 @@ validation_generator = test_datagen.flow_from_directory(
 training_data_n = len(train_generator.filenames)
 validation_data_n = len(validation_generator.filenames)
 
-print "Training data count : "+str(training_data_n)
-print "Validation data count : "+str(validation_data_n)
+print("Training data count : "+str(training_data_n))
+print("Validation data count : "+str(validation_data_n))
 
-if DATASET_NAME!="imdb":
+if DATASET_NAME!="imdb" and DATASET_NAME!="merged":
   training_data_n=training_data_n*4  # Data augumentation
-  print "Training data augumented count : "+str(training_data_n)
+  print("Training data augumented count : "+str(training_data_n))
 
 fit = model.fit_generator(train_generator,
    epochs=EPOCS,
