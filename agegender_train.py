@@ -31,16 +31,14 @@ import keras.callbacks
 import matplotlib.pyplot as plt
 
 # ----------------------------------------------
-# MODE
+# Settings
 # ----------------------------------------------
 
 ANNOTATIONS=''
 MODELS=''
 DATASET_NAME=''
-DATASET_ROOT_PATH=""
-AUGUMENTATION_MODE=""
-
-#DATASET_ROOT_PATH="/Volumes/ST5/keras/"
+DATASET_ROOT_PATH='./'  #/Volumes/ST5/keras/
+EXTRA_MODE=''
 
 # ----------------------------------------------
 # Argument
@@ -53,9 +51,9 @@ if len(sys.argv) >= 4:
   if len(sys.argv) >= 5:
     DATASET_ROOT_PATH=sys.argv[4]
   if len(sys.argv) >= 6:
-    AUGUMENTATION_MODE=sys.argv[5]
+    EXTRA_MODE=sys.argv[5]
 else:
-  print("usage: python agegender_train.py [gender/age/age101] [inceptionv3/vgg16/squeezenet/squeezenet2/mobilenet] [adience/imdb/utk/appareal/vggface2/merged] [datasetroot(optional)]")
+  print("usage: python agegender_train.py [gender/age/age101] [inceptionv3/vgg16/squeezenet/squeezenet2/mobilenet] [adience/imdb/utk/appareal/vggface2/merged] [datasetroot(optional)] [augumented/hdf5(optional)]")
   sys.exit(1)
 
 if ANNOTATIONS!="gender" and ANNOTATIONS!="age" and ANNOTATIONS!="age101":
@@ -70,15 +68,15 @@ if DATASET_NAME!="adience" and DATASET_NAME!="imdb" and DATASET_NAME!="utk" and 
   print("unknown dataset name");
   sys.exit(1)
 
-if AUGUMENTATION_MODE!="" and AUGUMENTATION_MODE!="augumented":
-  print("unknown augumentation mode");
+if EXTRA_MODE!="" and EXTRA_MODE!="augumented" and EXTRA_MODE!="hdf5":
+  print("unknown extra mode");
   sys.exit(1)
 
 # ----------------------------------------------
 # Model
 # ----------------------------------------------
 
-if AUGUMENTATION_MODE=="":
+if EXTRA_MODE!="augumented":
   DATA_AUGUMENTATION=False
 else:
   DATA_AUGUMENTATION=True
@@ -90,14 +88,13 @@ if ANNOTATIONS=='age101':
 else:
   EPOCS = 25
 
-AUGUMENT=""
-if DATA_AUGUMENTATION:
-  AUGUMENT="_augumented"
+EXTRA_PREFIX=""
+if EXTRA_MODE!="":
+  EXTRA_PREFIX="_"+EXTRA_MODE
 
-PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+AUGUMENT+'.png'
-MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+AUGUMENT+'.hdf5'
+PLOT_FILE=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+EXTRA_PREFIX+'.png'
+MODEL_HDF5=DATASET_ROOT_PATH+'pretrain/agegender_'+ANNOTATIONS+'_'+MODELS+'_'+DATASET_NAME+EXTRA_PREFIX+'.hdf5'
 
-#Size
 if ANNOTATIONS=='age':
   N_CATEGORIES=8
 if ANNOTATIONS=='gender':
@@ -105,7 +102,23 @@ if ANNOTATIONS=='gender':
 if ANNOTATIONS=='age101':
   N_CATEGORIES=101
 
-#model
+# ----------------------------------------------
+# Limit GPU memory usage
+# ----------------------------------------------
+
+import tensorflow as tf
+import keras.backend as backend
+
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.5
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
+backend.set_session(sess)
+
+# ----------------------------------------------
+# Build Model
+# ----------------------------------------------
+
 if(MODELS=='inceptionv3'):
    IMAGE_SIZE = 299
    input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
@@ -147,12 +160,12 @@ elif(MODELS=='squeezenet'):
   predictions = Dense(N_CATEGORIES, activation='softmax')(x)
   model = Model(inputs=base_model.input, outputs=predictions)
 elif(MODELS=='squeezenet2'):
-  IMAGE_SIZE=227
+  IMAGE_SIZE=64
   import sys
   sys.path.append('../keras-squeezenet-master')
   from keras_squeezenet import SqueezeNet
   input_tensor = Input(shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
-  base_model = SqueezeNet(weights="imagenet", include_top=False, input_tensor=input_tensor)
+  base_model = SqueezeNet(include_top=False, input_tensor=input_tensor)
   x = base_model.output
   x = Dropout(0.5, name='drop9')(x)
   x = Convolution2D(N_CATEGORIES, (1, 1), padding='valid', name='conv10')(x)
@@ -265,13 +278,29 @@ if DATASET_NAME!="imdb" and DATASET_NAME!="merged":
   training_data_n=training_data_n*4  # Data augumentation
   print("Training data augumented count : "+str(training_data_n))
 
-fit = model.fit_generator(train_generator,
-   epochs=EPOCS,
-   verbose=1,
-   validation_data=validation_generator,
-   steps_per_epoch=training_data_n//BATCH_SIZE,
-   validation_steps=validation_data_n//BATCH_SIZE
-)
+if EXTRA_MODE=="hdf5":
+  from keras.utils.io_utils import HDF5Matrix
+  HDF5_PATH=DATASET_ROOT_PATH+"dataset/"+DATASET_NAME+"_"+ANNOTATIONS+".h5"
+  x_train = HDF5Matrix(HDF5_PATH, 'training_x')
+  y_train = HDF5Matrix(HDF5_PATH, 'training_y')
+  x_validation = HDF5Matrix(HDF5_PATH, 'validation_x')
+  y_validation = HDF5Matrix(HDF5_PATH, 'validation_y')
+  fit = model.fit(
+    epochs=EPOCS,
+    x=x_train, 
+    y=y_train,
+    validation_data=(x_validation,y_validation),
+    batch_size=BATCH_SIZE,
+    shuffle='batch'
+  )
+else:
+  fit = model.fit_generator(train_generator,
+    epochs=EPOCS,
+    verbose=1,
+    validation_data=validation_generator,
+    steps_per_epoch=training_data_n//BATCH_SIZE,
+    validation_steps=validation_data_n//BATCH_SIZE
+  )
 
 model.save(MODEL_HDF5)
 
