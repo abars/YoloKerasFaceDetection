@@ -231,52 +231,53 @@ def get_random_eraser(p=0.5, s_l=0.02, s_h=0.4, r_1=0.3, r_2=1/0.3, v_l=0, v_h=2
 # Data
 # ----------------------------------------------
 
-preprocessing_function=None
-if DATA_AUGUMENTATION:
-  preprocessing_function=get_random_eraser(v_l=0, v_h=255)
+if EXTRA_MODE!="hdf5":
+  preprocessing_function=None
+  if DATA_AUGUMENTATION:
+    preprocessing_function=get_random_eraser(v_l=0, v_h=255)
 
-train_datagen = ImageDataGenerator(
-   rescale=1.0 / 255,
-   shear_range=0.2,
-   zoom_range=0.2,
-   horizontal_flip=True,
-   rotation_range=10,
-   preprocessing_function=preprocessing_function
-)
+  train_datagen = ImageDataGenerator(
+    rescale=1.0 / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    rotation_range=10,
+    preprocessing_function=preprocessing_function
+  )
 
-test_datagen = ImageDataGenerator(
-   rescale=1.0 / 255
-)
+  test_datagen = ImageDataGenerator(
+    rescale=1.0 / 255
+  )
 
-train_generator = train_datagen.flow_from_directory(
-   DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/train',
-   target_size=(IMAGE_SIZE, IMAGE_SIZE),
-   batch_size=BATCH_SIZE,
-   class_mode='categorical',
-   shuffle=True
-)
+  train_generator = train_datagen.flow_from_directory(
+    DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/train',
+    target_size=(IMAGE_SIZE, IMAGE_SIZE),
+    batch_size=BATCH_SIZE,
+    class_mode='categorical',
+    shuffle=True
+  )
 
-validation_generator = test_datagen.flow_from_directory(
-   DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/validation',
-   target_size=(IMAGE_SIZE, IMAGE_SIZE),
-   batch_size=BATCH_SIZE,
-   class_mode='categorical',
-   shuffle=True
-)
+  validation_generator = test_datagen.flow_from_directory(
+    DATASET_ROOT_PATH+'dataset/agegender_'+DATASET_NAME+'/annotations/'+ANNOTATIONS+'/validation',
+    target_size=(IMAGE_SIZE, IMAGE_SIZE),
+    batch_size=BATCH_SIZE,
+    class_mode='categorical',
+    shuffle=True
+  )
+
+  training_data_n = len(train_generator.filenames)
+  validation_data_n = len(validation_generator.filenames)
+
+  print("Training data count : "+str(training_data_n))
+  print("Validation data count : "+str(validation_data_n))
+
+  if DATASET_NAME!="imdb" and DATASET_NAME!="merged":
+    training_data_n=training_data_n*4  # Data augumentation
+    print("Training data augumented count : "+str(training_data_n))
 
 # ----------------------------------------------
 # Train
 # ----------------------------------------------
-
-training_data_n = len(train_generator.filenames)
-validation_data_n = len(validation_generator.filenames)
-
-print("Training data count : "+str(training_data_n))
-print("Validation data count : "+str(validation_data_n))
-
-if DATASET_NAME!="imdb" and DATASET_NAME!="merged":
-  training_data_n=training_data_n*4  # Data augumentation
-  print("Training data augumented count : "+str(training_data_n))
 
 if EXTRA_MODE=="hdf5":
   from keras.utils.io_utils import HDF5Matrix
